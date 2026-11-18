@@ -101,3 +101,75 @@
 @media(max-width:1020px){.design-workbench:not(.is-stacked) .imp-workspace{grid-template-columns:1fr}.design-workbench:not(.is-stacked) .imp-controls{grid-column:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-right:0}.design-workbench:not(.is-stacked) .imp-workarea{grid-column:1;border-top:1px solid var(--line)}}
 @media(max-width:850px){.design-workbench{grid-template-columns:minmax(0,1fr)!important}.layout-switch{display:none}.design-workbench>.editor-panel,.design-workbench>.imp-panel{width:100%}}
 @media(max-width:540px){.design-workbench:not(.is-stacked) .imp-controls{grid-template-columns:1fr}.design-workbench:not(.is-stacked) .imp-controls>.imp-two,.design-workbench:not(.is-stacked) .imp-controls>.imp-solve,.design-workbench:not(.is-stacked) .imp-controls>.imp-small{grid-column:1}.design-workbench:not(.is-stacked) .imp-readouts{grid-template-columns:repeat(2,minmax(0,1fr))}.design-workbench:not(.is-stacked) .imp-primary{grid-column:1/-1;grid-row:auto}.design-workbench:not(.is-stacked) .imp-tol-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.design-workbench:not(.is-stacked) .imp-title{flex-wrap:wrap}}
+
+/* v0.4 engineering workbench: direct geometry, constrained solver and via fence */
+.imp-panel{min-width:0}
+.imp-canvas-head{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:2px 12px 0;flex-wrap:wrap}
+.imp-canvas-head .imp-canvas-title{padding:8px 0 1px}
+.imp-canvas-tip{color:var(--muted);font-size:10px;line-height:1.45;margin:5px 12px 2px}
+.imp-scale-switch button{padding:5px 8px;font-size:10px}
+.imp-label-action{cursor:pointer;outline:0}
+.imp-label-action:hover rect,.imp-label-action:focus-visible rect{stroke:var(--accent);stroke-width:2}
+.imp-label-action:focus-visible{outline:0}
+.imp-solve{display:grid;grid-template-columns:minmax(0,1fr) minmax(85px,105px);gap:8px;align-items:end}
+.imp-solve .imp-field{min-width:0}
+.imp-solve-options{display:flex;flex-direction:column;gap:7px;min-width:0}
+.imp-solve-options label{font-size:10px;color:var(--muted);font-weight:680}
+.imp-solve-options select{padding:7px 5px;height:36px;font-size:10px;width:100%}
+.imp-solve .imp-solve-btn{grid-column:span 2;max-width:none;width:100%;background:var(--softaccent);border-color:var(--accent)}
+.imp-target-result{font-size:11px;margin-top:-3px;line-height:1.4}
+.imp-target-result .good{color:#59c99a}.imp-target-result .warn{color:var(--yellow)}
+.imp-tol-inputs{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.imp-tol-inputs label{display:flex;flex-direction:column;align-items:stretch;gap:5px}
+.imp-tol-unit{display:flex;align-items:stretch;gap:0}
+.imp-tol-unit input{width:100%;min-width:0;max-width:none;border-radius:6px 0 0 6px;height:35px;padding:7px 6px;font-size:11px}
+.imp-tol-unit select,.imp-tol-unit span{display:grid;place-items:center;height:35px;min-width:39px;width:39px;padding:0 3px;background:var(--panel3);border:1px solid var(--line);border-left:0;border-radius:0 5px 5px 0;color:var(--muted);font-size:10px}
+.imp-sensitivity{display:grid;gap:6px;margin-top:14px}
+.sensitivity-row{display:grid;grid-template-columns:20px minmax(0,1fr) 65px;gap:9px;align-items:center;font-size:10px;color:var(--muted)}
+.sensitivity-row strong{text-align:right;color:var(--text);font-variant-numeric:tabular-nums}
+.sensitivity-track{height:9px;border-radius:4px;background:var(--panel3);overflow:hidden}
+.sensitivity-track i{height:100%;display:block;border-radius:4px;background:linear-gradient(90deg,var(--accent),#a6d8c5)}
+#impToleranceWarning{font-size:10px;margin-top:10px;line-height:1.5;color:var(--muted)}
+.via-section{border-top:1px solid var(--line);padding:14px 16px 18px}
+.via-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:13px}
+.via-head h3{margin:5px 0 5px;font-size:15px;font-weight:750}
+.via-head p{font-size:10px;margin:0;line-height:1.45;color:var(--muted)}
+.via-layout{display:grid;grid-template-columns:minmax(220px,1fr) minmax(230px,1.05fr);gap:14px;align-items:start}
+.via-form,.via-visual{min-width:0}
+.via-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.via-grid label{display:flex;flex-direction:column;gap:5px;min-width:0}
+.via-grid label>span:first-child{font-size:10px;line-height:1.35;color:var(--muted)}
+.via-grid input{width:100%;font-size:11px;height:35px}
+.via-grid .imp-unit span{font-size:10px}
+.via-quick{display:flex;gap:7px;margin-top:12px}
+.via-quick button{font-size:10px;min-height:36px;white-space:normal;flex:1}
+.via-visual{background:var(--viewport);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.via-visual .imp-canvas-title{padding:12px 13px 4px}
+#viaSvg{display:block;width:100%;height:auto;max-height:245px}
+.via-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:12px}
+.via-results>div{border:1px solid var(--line);background:var(--panel);border-radius:5px;min-width:0;padding:7px}
+.via-results small{font-size:9px;color:var(--muted);display:block;min-height:13px}
+.via-results strong{display:block;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap;margin-top:4px}
+.via-warnings{padding:3px 12px 12px;font-size:10px;line-height:1.5;color:var(--muted)}
+.via-warnings p{margin:9px 0 0}
+.via-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.via-check-grid span{font-size:10px;padding:6px 7px;border-radius:5px;border:1px solid var(--line);background:var(--panel)}
+.via-check-grid small{font-size:9px;color:var(--muted);display:block;line-height:1.6;margin-top:3px}
+.via-check-grid .pass{color:#54bf99}.via-check-grid .fail{color:var(--error);border-color:#ab5d5460}
+@media(min-width:1850px){.imp-workspace{grid-template-columns:minmax(170px,210px) minmax(0,1fr)}.imp-readouts{grid-column:span 2;display:grid;grid-template-columns:1.2fr repeat(4,1fr);gap:5px;align-items:center;border-left:0;border-top:1px solid var(--line)}}
+@media(max-width:1850px){.via-layout{grid-template-columns:1fr}.via-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1200px){.via-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.via-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.via-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.imp-tol-inputs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:630px){.via-layout{grid-template-columns:1fr}.imp-tol-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.imp-canvas-head{padding:2px 9px}.imp-canvas-tip{margin:4px 9px 2px}.via-section{padding:14px 11px}.via-results{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:390px){.via-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.via-results{grid-template-columns:repeat(2,minmax(0,1fr))}.via-head{flex-wrap:wrap}.imp-solve{grid-template-columns:minmax(0,1fr) minmax(80px,.8fr)}}
+
+/* Compact in-page jump bar: avoids long manual scrolling on handsets */
+.mobile-jump-nav{display:none}
+@media(max-width:850px){.mobile-jump-nav{display:flex;position:sticky;top:0;z-index:9;gap:7px;padding:8px 10px;background:var(--panel);border:1px solid var(--line);border-radius:8px;margin:0 0 12px}.mobile-jump-nav a{flex:1;text-decoration:none;text-align:center;color:var(--text);font-size:11px;font-weight:680;border-radius:6px;padding:9px 2px;background:var(--panel2);border:1px solid var(--line)}.mobile-jump-nav a:focus-visible,.mobile-jump-nav a:hover{border-color:var(--accent);color:var(--accent)}.editor-panel,.imp-panel,.via-section{scroll-margin-top:70px}}
+
+.imp-workarea{position:relative}
+.imp-floating-editor{position:absolute;z-index:7;width:164px;border:1px solid var(--accent);border-radius:8px;padding:9px;background:var(--panel);box-shadow:0 12px 30px #0005}
+.imp-floating-editor label{font-size:10px;color:var(--muted);font-weight:750;display:block;margin-bottom:5px}
+.imp-floating-editor div{display:flex;gap:5px}
+.imp-floating-editor input{width:100%;min-width:0;height:34px;font-size:12px}
+.imp-floating-editor button{background:var(--accent);color:var(--accent-text);font-size:15px;padding:3px 10px;font-weight:750}

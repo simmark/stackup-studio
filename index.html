@@ -5,12 +5,12 @@
 <meta name="theme-color" content="#0b121e" id="themeMeta"><meta name="application-name" content="SIMONLATION Stackup Studio">
 <meta name="description" content="Free, local-first PCB layer stackup designer. Design copper and dielectric layers, import KiCad stackups, and export projects for impedance workflows.">
 <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>Stackup Studio | SIMONLATION</title><link rel="stylesheet" href="./styles.css?v=0.3.0">
+<title>Stackup Studio | SIMONLATION</title><link rel="stylesheet" href="./styles.css?v=0.4.0">
 </head>
 <body>
 <div class="app" id="app">
 <header class="topbar">
-  <div class="brand"><div class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></div><div class="brand-word"><b>SIMON<span>LATION</span></b><small>STACKUP STUDIO</small></div><span class="beta-tag">PREVIEW 0.3</span></div>
+  <div class="brand"><div class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></div><div class="brand-word"><b>SIMON<span>LATION</span></b><small>STACKUP STUDIO</small></div><span class="beta-tag">BETA 0.4</span></div>
   <nav class="top-actions" aria-label="Project actions">
     <button class="btn icon-btn" id="undoBtn" title="Undo · Ctrl+Z" aria-label="Undo">↶</button><button class="btn icon-btn" id="redoBtn" title="Redo · Ctrl+Shift+Z" aria-label="Redo">↷</button>
     <span class="sep"></span><button class="btn" id="openBtn" data-i18n="open">Open</button>
@@ -40,8 +40,9 @@
   <main class="main">
     <div class="main-heading"><div><span class="eyebrow" data-i18n="workspaceTag">PCB ENGINEERING / MATERIAL SYSTEM</span><h1 data-i18n="workspaceTitle">Layer stackup</h1></div><div class="main-heading-actions"><div class="segmented layout-switch" role="group" aria-label="Workspace layout"><button id="layoutSplitBtn" data-layout="split" data-i18n="sideBySide" aria-pressed="true" class="active">Side by side</button><button id="layoutStackBtn" data-layout="stacked" data-i18n="stackedView" aria-pressed="false">Stacked</button></div><button class="btn" id="sampleBtn" data-i18n="resetSample">Reset example</button><button class="btn" id="installBtn" hidden data-i18n="install">Install app</button></div></div>
     <div class="metric-row"><div class="metric"><span data-i18n="boardBody">BOARD BODY</span><strong id="bodyMetric">1.600 <small>mm</small></strong><em id="targetDelta">On target</em></div><div class="metric"><span data-i18n="totalIncludingMask">WITH SOLDER MASK</span><strong id="totalMetric">1.620 <small>mm</small></strong><em data-i18n="allLayers">All physical layers</em></div><div class="metric"><span data-i18n="copperLayers">COPPER LAYERS</span><strong id="copperMetric">4</strong><em data-i18n="fromTop">Top to bottom</em></div><div class="metric"><span data-i18n="dielectricLayers">DIELECTRICS</span><strong id="dielMetric">3</strong><em data-i18n="corePrepreg">Core / prepreg</em></div></div>
+    <nav class="mobile-jump-nav" aria-label="Schnellnavigation"><a href="#stackPanel" data-imp-jump="stack">Stackup</a><a href="#impPanel" data-imp-jump="imp">Impedance</a><a href="#viaSection" data-imp-jump="via">Via Fence</a></nav>
     <div class="design-workbench" id="designWorkbench" aria-label="Stackup and impedance workspace">
-    <section class="editor-panel" aria-label="Layer cross-section">
+    <section class="editor-panel" id="stackPanel" aria-label="Layer cross-section">
       <div class="section-heading"><div><span class="eyebrow" data-i18n="geometry">LIVE GEOMETRY</span><h2 data-i18n="crossSection">Cross-section</h2></div><div class="segmented"><button data-view="readable" class="active" data-i18n="readable">Readable</button><button data-view="scale" data-i18n="trueScale">True ratio</button></div></div>
       <div class="section-subline"><span data-i18n="clickLayer">Select any layer in the diagram or table to inspect and edit.</span><span id="scaleNote">Enhanced layer visibility</span></div>
       <div class="diagram-area"><svg id="stackSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" role="img" aria-label="Physical PCB stackup cross section"><text x="400" y="210">Loading...</text></svg></div>
@@ -58,11 +59,11 @@
             <div class="imp-field"><label for="impWidth" data-imp-label="width">Width W</label><div class="imp-unit"><input id="impWidth" type="number" min="0.025" max="5" step="0.005" value="0.25"><span>mm</span></div></div>
             <div class="imp-field" id="impGapField"><label for="impGap" data-imp-label="spacing">Gap S</label><div class="imp-unit"><input id="impGap" type="number" min="0.025" max="5" step="0.005" value="0.18"><span>mm</span></div></div>
           </div>
-          <div class="imp-solve"><div class="imp-field"><label for="impTarget" data-imp-label="target">Target impedance</label><div class="imp-unit"><input id="impTarget" type="number" min="10" max="250" step="1" value="50"><span>Ω</span></div></div><button class="btn imp-solve-btn" id="impSolveBtn" data-imp-label="solve">Solve width</button></div>
+          <div class="imp-solve"><div class="imp-field"><label for="impTarget" data-imp-label="target">Target impedance</label><div class="imp-unit"><input id="impTarget" type="number" min="10" max="250" step="1" value="50"><span>Ω</span></div></div><div class="imp-solve-options"><label for="impOptimize" data-imp-label="optimize">Optimize</label><select id="impOptimize" aria-label="Geometry optimization"><option value="width">W · keep S</option><option value="spacing">S · keep W</option><option value="balanced">W + S</option></select></div><button class="btn imp-solve-btn" id="impSolveBtn" data-imp-label="solve">Solve</button></div><div class="imp-target-result" id="impTargetDelta" aria-live="polite"></div>
           <p class="imp-small" data-imp-label="sample">Preliminary estimate · not a fabrication specification</p>
         </div>
         <div class="imp-workarea">
-          <div class="imp-canvas-title" data-imp-label="outline">Cross-section (schematic)</div>
+          <div class="imp-canvas-head"><div class="imp-canvas-title" data-imp-label="outline">Cross-section (schematic)</div><div class="segmented imp-scale-switch"><button type="button" data-imp-view="schematic" class="active">Schematic</button><button type="button" data-imp-view="metric">1:1 XY</button></div></div><p class="imp-canvas-tip" data-imp-label="editTip">Click W, S or H to edit · approximate visual proportions</p>
           <svg id="impSvg" viewBox="0 0 620 310" xmlns="http://www.w3.org/2000/svg" aria-label="Trace geometry cross-section" role="img"></svg>
           <div class="imp-method"><span data-imp-label="model">Calculation model</span><strong id="impMethod">—</strong></div>
         </div>
@@ -78,18 +79,41 @@
         <div class="imp-tol">
           <div class="group-label" data-imp-label="tolerance">TOLERANCE EXPLORER</div>
           <div class="imp-tol-inputs">
-            <label>W ±<input id="impTolW" type="number" min="0" max="30" step="1" value="10"><span>%</span></label>
-            <label>H ±<input id="impTolH" type="number" min="0" max="30" step="1" value="10"><span>%</span></label>
-            <label>T ±<input id="impTolT" type="number" min="0" max="30" step="1" value="10"><span>%</span></label>
-            <label id="impTolSField">S ±<input id="impTolS" type="number" min="0" max="30" step="1" value="10"><span>%</span></label>
-            <label>Dk ±<input id="impTolER" type="number" min="0" max="30" step="1" value="5"><span>%</span></label>
+            <label>W ±<span class="imp-tol-unit"><input id="impTolW" type="number" min="0" max="500" step="1" value="10"><select id="impUnitW" aria-label="Width tolerance unit"><option value="percent">%</option><option value="um">µm</option></select></span></label>
+            <label>H ±<span class="imp-tol-unit"><input id="impTolH" type="number" min="0" max="500" step="1" value="10"><select id="impUnitH" aria-label="Height tolerance unit"><option value="percent">%</option><option value="um">µm</option></select></span></label>
+            <label>T ±<span class="imp-tol-unit"><input id="impTolT" type="number" min="0" max="500" step="1" value="10"><select id="impUnitT" aria-label="Copper tolerance unit"><option value="percent">%</option><option value="um">µm</option></select></span></label>
+            <label id="impTolSField">S ±<span class="imp-tol-unit"><input id="impTolS" type="number" min="0" max="500" step="1" value="10"><select id="impUnitS" aria-label="Gap tolerance unit"><option value="percent">%</option><option value="um">µm</option></select></span></label>
+            <label>Dk ±<span class="imp-tol-unit"><input id="impTolER" type="number" min="0" max="50" step="1" value="5"><span>%</span></span></label>
           </div>
           <div class="imp-range-metrics"><div><span data-imp-label="lower">Minimum</span><strong id="impTolMin">—</strong></div><div><span data-imp-label="nominal">Nominal</span><strong id="impTolNominal">—</strong></div><div><span data-imp-label="upper">Maximum</span><strong id="impTolMax">—</strong></div></div>
           <div class="imp-bar" id="impTolBar"><span id="impTolIndicator"></span></div>
-          <p class="imp-small" data-imp-label="toleranceNote">32 worst-case corners; not a manufacturing distribution.</p>
+          <p class="imp-small" id="impToleranceNote" data-imp-label="toleranceNote">Worst-case corners, no statistical yield.</p><div class="imp-sensitivity" id="impSensitivity" aria-label="Tolerance impact by variable"></div><div class="imp-small" id="impToleranceWarning" role="status"></div>
         </div>
         <div class="imp-notices" id="impIssue" role="status" aria-live="polite"></div>
       </div>
+      <section class="via-section" id="viaSection" aria-label="Via fence designer">
+        <div class="via-head"><div><span class="eyebrow">PCB RF / SI · LAYOUT ADVISOR</span><h3 data-imp-label="viaTitle">Via Fence Designer</h3><p data-imp-label="viaSubtitle">Ground stitching around single-ended or differential traces · geometric rules only</p></div><span class="imp-pill" data-imp-label="viaHeuristic">LAYOUT GUIDELINE</span></div>
+        <div class="via-layout">
+          <div class="via-form">
+            <div class="via-grid">
+              <label><span data-imp-label="viaFreq">Maximum frequency</span><span class="imp-unit"><input type="number" id="viaFrequency" value="5" min="0.01" max="100" step="0.5"><span>GHz</span></span></label>
+              <label><span data-imp-label="viaPitch">Requested pitch</span><span class="imp-unit"><input type="number" id="viaPitch" value="2" min="0.1" step="0.1"><span>mm</span></span></label>
+              <label><span data-imp-label="viaPad">Pad diameter</span><span class="imp-unit"><input type="number" id="viaPad" value="0.6" min="0.05" step="0.05"><span>mm</span></span></label>
+              <label><span data-imp-label="viaDrill">Drill diameter</span><span class="imp-unit"><input type="number" id="viaDrill" value="0.3" min="0.05" step="0.05"><span>mm</span></span></label>
+              <label><span data-imp-label="viaEdge">Trace edge to via pad</span><span class="imp-unit"><input type="number" id="viaEdge" value="0.4" min="0.01" step="0.05"><span>mm</span></span></label>
+              <label><span data-imp-label="viaLength">Fence length</span><span class="imp-unit"><input type="number" id="viaLength" value="30" min="1" step="5"><span>mm</span></span></label>
+              <label><span data-imp-label="viaMinTrace">Min trace clearance</span><span class="imp-unit"><input type="number" id="viaMinTrace" value="0.15" min="0.01" step="0.05"><span>mm</span></span></label>
+              <label><span data-imp-label="viaRing">Min annular ring</span><span class="imp-unit"><input type="number" id="viaMinRing" value="0.1" min="0.01" step="0.05"><span>mm</span></span></label>
+              <label><span data-imp-label="viaGapMin">Min pad-to-pad</span><span class="imp-unit"><input type="number" id="viaMinGap" value="0.2" min="0.01" step="0.05"><span>mm</span></span></label>
+            </div>
+            <div class="via-quick"><button class="btn accent-outline" type="button" id="viaAutoPitch" data-imp-label="viaAuto">Use λg/20</button><button class="btn" type="button" id="viaExport" data-imp-label="viaExport">Export via JSON</button></div>
+          </div>
+          <div class="via-visual">
+            <div class="imp-canvas-title" data-imp-label="viaTopView">Top view · GND via rows (schematic)</div><svg viewBox="0 0 620 230" id="viaSvg" role="img" aria-label="Via fence layout top view"></svg>
+            <div class="via-results" id="viaResults" aria-live="polite"></div><div id="viaWarnings" class="via-warnings"></div>
+          </div>
+        </div>
+      </section>
     </section>
     </div>
     <section class="table-panel" aria-label="Layer specification">
@@ -100,10 +124,10 @@
   </main>
   <aside class="sidebar sidebar-right"><div class="pane-title"><span class="eyebrow" data-i18n="propertiesTag">CONTEXT INSPECTOR</span><h2 data-i18n="properties">Properties</h2></div><div class="pane-scroll" id="inspector"></div></aside>
 </div>
-<footer class="statusbar"><div><span class="status-dot"></span><span id="statusText" data-i18n="localReady">Local engine ready</span><span class="status-divider">│</span><span data-i18n="noCloud">No cloud connection required</span></div><div><span id="validationStatus">—</span><span class="status-divider">│</span><span data-i18n="version">v0.2 preview</span></div></footer>
+<footer class="statusbar"><div><span class="status-dot"></span><span id="statusText" data-i18n="localReady">Local engine ready</span><span class="status-divider">│</span><span data-i18n="noCloud">No cloud connection required</span></div><div><span id="validationStatus">—</span><span class="status-divider">│</span><span data-i18n="version">v0.4 beta</span></div></footer>
 </div>
 <input id="fileInput" type="file" hidden accept=".json,.kicad_pcb,.txt,application/json,text/plain">
 <dialog id="helpDialog"><div class="dialog-top"><h2 data-i18n="helpTitle">Stackup Studio · Help</h2><button id="closeHelp" class="btn">✕</button></div><div id="helpContent"></div></dialog>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-<script src="./impedance-engine.js" defer></script><script src="./app.js" defer></script><script src="./impedance-ui.js" defer></script>
+<script src="./impedance-engine.js" defer></script><script src="./via-fence-engine.js" defer></script><script src="./app.js" defer></script><script src="./impedance-ui.js" defer></script>
 </body></html>

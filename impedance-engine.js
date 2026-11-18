@@ -75,6 +75,7 @@ function stripline(w,hTop,hBottom,t,er){
 function calculate(input){
  const {stackup,signalId,mode='microstrip',widthMM,spacingMM=.15}=input;
  if(!stackup?.layers)return error('Missing stackup.');
+ if(['gcpw','diff-gcpw','embedded-microstrip','asym-stripline'].includes(mode))return error('Geometry preview only. A validated multilayer / coplanar 2D solver is required for impedance.');
  if(!['microstrip','diff-microstrip','stripline','diff-stripline'].includes(mode))return error('Unknown transmission line geometry.');
  const w=Number(widthMM),s=Number(spacingMM),paired=mode.startsWith('diff-');
  if(!finite(w)||w<.025||w>5)return error('Width must be between 0.025 and 5 mm.');
@@ -167,5 +168,108 @@ function toleranceCorners(input, tolerances={w:10,h:10,t:10,s:10,er:5}){
  if(values.length!==32)return error('Tolerance corners violate calculation model limits. Reduce tolerances.');
  return {ok:true,nominal:original.zDiff??original.z0,min:Math.min(...values),max:Math.max(...values),method:'32 worst-case corners (W, H, T, S, Dk); not a statistical production yield',count:values.length};
 }
-root.SimonlationImpedance=Object.freeze({calculate,solveWidth,toleranceCorners,findRefs,hammerstad,stripline,VERSION:'0.2'});
+
+/** Reverse design: only one independent impedance constraint. For a differential pair there
+ * are infinitely many W,S combinations meeting Zdiff; balanced mode chooses the nearest
+ * feasible combination in logarithmic parameter space around the user's starting geometry.
+ * Do not mistake this preference criterion for a manufacturing optimum. */
+function solveSpacing(input,targetOhms){
+ const target=Number(targetOhms);
+ if(!input.mode?.startsWith('diff-'))return error('Gap solve is only available for differential traces.');
+ if(!finite(target)||target<10||target>250)return error('Target impedance must be between 10 and 250 Ω.');
+ const evaluate=s=>{const r=calculate({...input,spacingMM:s});return r.ok?r.zDiff:null};
+ const steps=200,samples=[];
+ for(let i=0;i<=steps;i++){
+  const s=.025*Math.pow(5/.025,i/steps),z=evaluate(s);
+  if(z!==null)samples.push({s,z});
+ }
+ for(let i=1;i<samples.length;i++){
+  let a=samples[i-1],b=samples[i];
+  if((a.z-target)*(b.z-target)>0)continue;
+  let lo=a.s,hi=b.s;
+  for(let k=0;k<48;k++){
+   const mid=(lo+hi)/2,z=evaluate(mid);if(z===null)return error('Gap solve entered unsupported range.');
+   if(z<target)lo=mid;else hi=mid;
+  }
+  const spacingMM=(lo+hi)/2;
+  return {ok:true,widthMM:input.widthMM,spacingMM,calculated:calculate({...input,spacingMM}),strategy:'hold width'};
+ }
+ return error('Target not reachable with the fixed width in the model validity range (gap 0.025–5 mm).');
+}
+function optimizeGeometry(input,targetOhms,strategy='balanced'){
+ if(strategy==='width'){
+  const r=solveWidth(input,targetOhms);
+  return r.ok?{...r,spacingMM:input.spacingMM,strategy:'hold gap'}:r;
+ }
+ if(strategy==='spacing')return solveSpacing(input,targetOhms);
+ if(strategy!=='balanced'||!input.mode?.startsWith('diff-'))return error('Balanced optimization is only available for differential traces.');
+ const original=calculate(input);
+ if(!original.ok)return original;
+ const baseW=Number(input.widthMM),baseS=Number(input.spacingMM);
+ let best=null;
+ // Scan width log-space; solve the coupled spacing at each candidate width.
+ for(let i=0;i<=150;i++){
+  const w=Math.max(.025,Math.min(5,baseW*Math.exp((i-75)*Math.log(10)/75)));
+  const solution=solveSpacing({...input,widthMM:w},targetOhms);
+  if(!solution.ok)continue;
+  const a=Math.log(w/baseW),b=Math.log(solution.spacingMM/baseS);
+  const cost=a*a+b*b;
+  if(!best||cost<best.cost)best={...solution,widthMM:w,cost,strategy:'balanced minimum logarithmic change'};
+ }
+ if(!best)return error('No feasible W / S combination found in supported geometry limits.');
+ delete best.cost;
+ best.calculated=calculate({...input,widthMM:best.widthMM,spacingMM:best.spacingMM});
+ return best;
+}
+function toleranceAnalysis(input,limits){
+ const original=calculate(input);if(!original.ok)return original;
+ const paired=input.mode.startsWith('diff-');
+ const keys=paired?['w','h','t','s','er']:['w','h','t','er'];
+ const normalized={};
+ for(const key of keys){
+  const l=limits?.[key]||{value:0,unit:'percent'};
+  const v=Number(l.value);
+  if(!Number.isFinite(v)||v<0)return error('Tolerance must be finite and non-negative.');
+  if(l.unit==='percent'&&v>50)return error('Percentage tolerance exceeds 50 %.');
+  if(l.unit==='um'&&v>5000)return error('Absolute tolerance exceeds 5000 µm.');
+  if(!['percent','um'].includes(l.unit))return error('Tolerance unit must be percent or µm.');
+  if(key==='er'&&l.unit!=='percent')return error('Dk tolerance must be relative (%).');
+  normalized[key]={value:v,unit:l.unit};
+ }
+ function valueAt(signs){
+  const stackup=JSON.parse(JSON.stringify(input.stackup));
+  const index=stackup.layers.findIndex(l=>l.id===input.signalId);
+  if(index<0)return error('Signal layer missing.');
+  const take=(k,old)=>{const v=normalized[k];if(!v)return old;
+   return old+signs[k]*(v.unit==='um'?v.value/1000:old*v.value/100);};
+  stackup.layers[index].thicknessMM=take('t',stackup.layers[index].thicknessMM);
+  for(const dir of [-1,1])for(let j=index+dir;j>=0&&j<stackup.layers.length;j+=dir){
+   const layer=stackup.layers[j];if(layer.type==='copper')break;
+   if(isDiel(layer)){layer.thicknessMM=take('h',layer.thicknessMM);layer.epsilonR=take('er',layer.epsilonR);}
+  }
+  return calculate({...input,stackup,widthMM:take('w',Number(input.widthMM)),spacingMM:paired?take('s',Number(input.spacingMM)):input.spacingMM});
+ }
+ const nominal=original.zDiff??original.z0;
+ const results=[];
+ for(let bits=0;bits<2**keys.length;bits++){
+  const signs={};keys.forEach((k,i)=>signs[k]=bits&(1<<i)?1:-1);
+  const r=valueAt(signs);
+  if(!r.ok)return {ok:false,error:'Tolerance range crosses unsupported geometry: '+r.error,parameterSigns:signs};
+  results.push({value:r.zDiff??r.z0,signs});
+ }
+ const sensitivities=[];
+ for(const key of keys){
+  const minus=valueAt({w:0,h:0,t:0,s:0,er:0,[key]:-1});
+  const plus=valueAt({w:0,h:0,t:0,s:0,er:0,[key]:1});
+  if(!minus.ok||!plus.ok)return error('One-at-a-time sensitivity crosses unsupported geometry for '+key+'.');
+  const zMinus=minus.zDiff??minus.z0,zPlus=plus.zDiff??plus.z0;
+  sensitivities.push({key,minus:zMinus,plus:zPlus,deltaMinus:zMinus-nominal,deltaPlus:zPlus-nominal,impactOhms:Math.max(Math.abs(zMinus-nominal),Math.abs(zPlus-nominal))});
+ }
+ sensitivities.sort((a,b)=>b.impactOhms-a.impactOhms);
+ const low=results.reduce((a,b)=>a.value<b.value?a:b),high=results.reduce((a,b)=>a.value>b.value?a:b);
+ return {ok:true,nominal,min:low.value,max:high.value,count:results.length,worstLow:low.signs,worstHigh:high.signs,sensitivities,limits:normalized,model:original.method,
+ note:'Deterministic corners and one-at-a-time sensitivities; not statistical yield. All comparisons inherit model uncertainty.'};
+}
+
+root.SimonlationImpedance=Object.freeze({calculate,solveWidth,solveSpacing,optimizeGeometry,toleranceCorners,toleranceAnalysis,findRefs,hammerstad,stripline,VERSION:'0.4'});
 })(typeof window!=='undefined'?window:globalThis);

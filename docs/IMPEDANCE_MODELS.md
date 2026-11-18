@@ -1,4 +1,4 @@
-# PCB Impedance Lab · Analytical model specification · v0.2
+# PCB Impedance Lab · Analytical model specification · v0.4
 
 This file is an **engineering model description**, not a manufacturer/measurement validation report.
 
@@ -47,18 +47,28 @@ References: [Coupled microstrip modelling in Qucs](https://qucs.github.io/tech/n
 
 ## Inverse width design
 
-For a user-selected 10–250 Ω target, sample logarithmically in 0.025–5 mm track width, searching for a valid model range and a bracket that crosses the target. Then bisection determines W. If no valid bracket exists, report an unreachable target; **no made-up output**. Gap S stays fixed during width inversion. No optimizer for gap or dielectric height is present yet.
+For a user-selected 10–250 Ω target, sample logarithmically in 0.025–5 mm track width, searching for a valid model range and a bracket that crosses the target. Then bisection determines W. If no valid bracket exists, report an unreachable target; **no made-up output**. Gap S stays fixed during width inversion. Gap-only and joint W/S optimization have been added in v0.4; see below. A dielectric-height optimizer is not provided.
 
 ## Tolerance Explorer
 
-A deterministic full factorial corner sweep over **five independent variables** W, H, T, S and εr gives 2⁵=**32 corner evaluations**. The sweep changes selected signal copper T, the dielectric height(s) between signal layer and adjacent reference copper, and those dielectric εr values; width and gap are perturbed in the geometry inputs. It uses user-supplied ± ranges from 0 to 30%. For single-ended modes S is an unused factor; duplicate corners still evaluate consistently.
+A deterministic full factorial corner sweep over **five independent variables** W, H, T, S and εr gives 2⁵=**32 corner evaluations**. The sweep changes selected signal copper T, the dielectric height(s) between signal layer and adjacent reference copper, and those dielectric εr values; width and gap are perturbed in the geometry inputs. It uses user-supplied ± ranges from 0 to 30%. Single-ended modes have 2⁴ = 16 unique corners; differential modes have 2⁵ = 32.
 
 Displays nominal, min and max, not percentage yield. Copper thickness variation here is an input perturbation, **not a simulation of electroless/electrolytic deposition or lamination**. Other manufacturing variables, correlation and temperature are not modelled.
 
-## Explicit future upgrades (not in 0.2)
+## Explicit future upgrades (not in 0.4)
 
 - 2D electrostatic field solve with adaptive meshing and convergence tests for arbitrary multi-dielectric microstrip/stripline and CPWG; calculate capacitances with and without material to derive Z0 and effective Dk.
 - Differential mode solver separately evaluating odd/even capacitances, propagation velocities and modal asymmetry.
 - Metal edge/etch trapezoids, LPI solder mask, surface roughness and dispersion/loss vs frequency, qualified reference material libraries with provenance and measurement benchmarks.
 - CPWG grounded/unbacked, embedded/offset/broadside coupling, via 3D transition and return path checks from real layout.
 - Independent comparison against a field solver and physical PCB measurement before declaring accuracy suitable for controlled impedance production.
+
+## Beta 0.4 additions: gap inverse, joint geometry and tolerance sensitivities
+
+For differential modes, a reverse gap solve holds W fixed, samples S logarithmically (0.025–5 mm), brackets Zdiff and uses bisection; unreachable targets are explicitly rejected. Joint W/S design is **not mathematically unique** for one impedance target. The default selection rule minimizes `ln(W/Winitial)^2 + ln(S/Sinitial)^2` among candidates meeting Zdiff in the model's supported region. It does not minimize fabrication cost/yield, and no discrete fab grid is enforced.
+
+The new manufacturing tolerance inspector accepts W/H/T/S as percentages or **absolute µm** (converted exactly to mm), Dk as a percentage. It evaluates all 2⁴=16 single-ended or 2⁵=32 differential deterministic corner combinations and separately sweeps each parameter upward/downward with other parameters fixed, ranking the maximum absolute one-at-a-time impedance change. It rejects the entire interval if **any corner** is unsupported; ignoring invalid corners would understate the risk. The results inherit all inaccuracies of the chosen analytic/empirical model.
+
+Other geometries (GCPW, differential GCPW, embedded microstrip, asymmetric stripline) are **visual preview only** in beta 0.4. The calculator refuses a numeric Z result for these until a validated multilayer/CPW field model is available.
+
+For via fence wavelength, clearances, pad/drill and limitations see [Via Fence Method](VIA_FENCE_METHOD.md).
