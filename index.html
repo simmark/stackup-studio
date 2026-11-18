@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b121e" id="themeMeta"><meta name="application-name" content="SIMONLATION Stackup Studio">
+<meta name="description" content="Free, local-first PCB layer stackup designer. Design copper and dielectric layers, import KiCad stackups, and export projects for impedance workflows.">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="./icons/icon-192.png">
+<title>Stackup Studio | SIMONLATION</title><link rel="stylesheet" href="./styles.css?v=0.3.0">
+</head>
+<body>
+<div class="app" id="app">
+<header class="topbar">
+  <div class="brand"><div class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></div><div class="brand-word"><b>SIMON<span>LATION</span></b><small>STACKUP STUDIO</small></div><span class="beta-tag">PREVIEW 0.3</span></div>
+  <nav class="top-actions" aria-label="Project actions">
+    <button class="btn icon-btn" id="undoBtn" title="Undo · Ctrl+Z" aria-label="Undo">↶</button><button class="btn icon-btn" id="redoBtn" title="Redo · Ctrl+Shift+Z" aria-label="Redo">↷</button>
+    <span class="sep"></span><button class="btn" id="openBtn" data-i18n="open">Open</button>
+    <button class="btn primary" id="saveBtn" data-i18n="save">Export project</button>
+    <div class="menu-anchor"><button class="btn" id="exportBtn" aria-expanded="false" data-i18n="export">Export ▾</button><div class="dropdown hidden" id="exportMenu"><button data-export="svg">SVG · Cross-section</button><button data-export="png">PNG · Cross-section</button><button data-export="csv">CSV · Layer table</button><button data-export="csvde">CSV · Deutsch (Excel)</button><button data-export="bridge">JSON · Impedance handoff</button></div></div>
+    <span class="sep"></span><button class="btn mini" id="themeBtn" aria-label="Toggle theme">☀</button><button class="btn lang" id="langBtn">EN</button><button class="btn mini help" id="helpBtn" title="Help">?</button>
+  </nav>
+</header>
+<div class="workspace">
+  <aside class="sidebar sidebar-left">
+    <div class="pane-title"><span class="eyebrow" data-i18n="setupTag">PROJECT SETUP</span><h2 data-i18n="boardSetup">Board setup</h2></div>
+    <div class="pane-scroll">
+      <label class="fieldlabel" for="projectName" data-i18n="projectName">Project name</label><input id="projectName" class="full-input" type="text" maxlength="100" value="4-layer signal board"/>
+      <div class="group-label"><span data-i18n="presets">STARTING CONFIGURATION</span><span class="mini-note" data-i18n="presetsNote">replaces layers</span></div>
+      <div class="preset-grid" id="presetGrid"><button data-preset="2">2 <span data-i18n="layers">layers</span></button><button data-preset="4" class="active">4 <span data-i18n="layers">layers</span></button><button data-preset="6">6 <span data-i18n="layers">layers</span></button><button data-preset="8">8 <span data-i18n="layers">layers</span></button></div>
+      <label class="fieldlabel" for="targetThickness"><span data-i18n="targetThickness">Target board body thickness</span> <span class="unit">mm</span></label>
+      <div class="input-action"><input id="targetThickness" type="number" min="0.1" max="15" step="0.01" value="1.6"><button id="fitTargetBtn" class="btn accent-outline" data-i18n="fitTarget" title="Adjust unlocked dielectrics">Fit</button></div>
+      <p class="small-hint" data-i18n="targetNote">Board body = copper + dielectric. Solder mask is shown separately.</p>
+      <div class="group-label"><span data-i18n="options">OPTIONS</span></div>
+      <label class="check-line"><input id="maskEnabled" type="checkbox" checked><span data-i18n="mask">Top & bottom solder mask</span></label>
+      <label class="check-line"><input id="watermarkEnabled" type="checkbox" checked><span data-i18n="watermark">Branding on image export</span></label>
+      <div class="group-label"><span data-i18n="layersList">LAYER NAVIGATOR</span><span id="layerCount" class="count-pill">4 Cu</span></div>
+      <div class="layers-nav" id="layerNav" aria-label="Layers"></div>
+      <div class="small-box"><b data-i18n="privacyTitle">Local by design</b><p data-i18n="privacy">No sign-in, no upload. Project data remains in this browser until you export or delete it.</p></div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="main-heading"><div><span class="eyebrow" data-i18n="workspaceTag">PCB ENGINEERING / MATERIAL SYSTEM</span><h1 data-i18n="workspaceTitle">Layer stackup</h1></div><div class="main-heading-actions"><div class="segmented layout-switch" role="group" aria-label="Workspace layout"><button id="layoutSplitBtn" data-layout="split" data-i18n="sideBySide" aria-pressed="true" class="active">Side by side</button><button id="layoutStackBtn" data-layout="stacked" data-i18n="stackedView" aria-pressed="false">Stacked</button></div><button class="btn" id="sampleBtn" data-i18n="resetSample">Reset example</button><button class="btn" id="installBtn" hidden data-i18n="install">Install app</button></div></div>
+    <div class="metric-row"><div class="metric"><span data-i18n="boardBody">BOARD BODY</span><strong id="bodyMetric">1.600 <small>mm</small></strong><em id="targetDelta">On target</em></div><div class="metric"><span data-i18n="totalIncludingMask">WITH SOLDER MASK</span><strong id="totalMetric">1.620 <small>mm</small></strong><em data-i18n="allLayers">All physical layers</em></div><div class="metric"><span data-i18n="copperLayers">COPPER LAYERS</span><strong id="copperMetric">4</strong><em data-i18n="fromTop">Top to bottom</em></div><div class="metric"><span data-i18n="dielectricLayers">DIELECTRICS</span><strong id="dielMetric">3</strong><em data-i18n="corePrepreg">Core / prepreg</em></div></div>
+    <div class="design-workbench" id="designWorkbench" aria-label="Stackup and impedance workspace">
+    <section class="editor-panel" aria-label="Layer cross-section">
+      <div class="section-heading"><div><span class="eyebrow" data-i18n="geometry">LIVE GEOMETRY</span><h2 data-i18n="crossSection">Cross-section</h2></div><div class="segmented"><button data-view="readable" class="active" data-i18n="readable">Readable</button><button data-view="scale" data-i18n="trueScale">True ratio</button></div></div>
+      <div class="section-subline"><span data-i18n="clickLayer">Select any layer in the diagram or table to inspect and edit.</span><span id="scaleNote">Enhanced layer visibility</span></div>
+      <div class="diagram-area"><svg id="stackSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" role="img" aria-label="Physical PCB stackup cross section"><text x="400" y="210">Loading...</text></svg></div>
+      <div class="diagram-footer"><span><i class="legend-chip copper"></i><span data-i18n="copper">Copper</span></span><span><i class="legend-chip core"></i>Core</span><span><i class="legend-chip prepreg"></i>Prepreg</span><span><i class="legend-chip soldermask"></i><span data-i18n="maskShort">Mask</span></span><span class="foot-right" data-i18n="diagramNotice">Schematic preview · dimensions are numerical</span></div>
+    </section>
+    <section class="imp-panel" id="impPanel" aria-label="PCB Impedance Lab">
+      <div class="section-heading imp-title"><div><span class="eyebrow" data-imp-label="label">ANALYTICAL QUICK ESTIMATE</span><h2 data-imp-label="title">PCB Impedance Lab</h2></div><div class="imp-section-actions"><span class="imp-pill">QUASI-STATIC</span><button class="btn" id="impExportBtn" data-imp-label="export">Export result JSON</button></div></div>
+      <p class="imp-intro" data-imp-label="info">The stackup supplies H, copper thickness and Dk; enter W and S here. No field simulation.</p>
+      <div class="imp-workspace">
+        <div class="imp-controls">
+          <div class="imp-field"><label for="impSignal" data-imp-label="signal">Signal layer</label><select id="impSignal"></select></div>
+          <div class="imp-field"><label for="impMode" data-imp-label="mode">Geometry</label><select id="impMode"></select></div>
+          <div class="imp-two">
+            <div class="imp-field"><label for="impWidth" data-imp-label="width">Width W</label><div class="imp-unit"><input id="impWidth" type="number" min="0.025" max="5" step="0.005" value="0.25"><span>mm</span></div></div>
+            <div class="imp-field" id="impGapField"><label for="impGap" data-imp-label="spacing">Gap S</label><div class="imp-unit"><input id="impGap" type="number" min="0.025" max="5" step="0.005" value="0.18"><span>mm</span></div></div>
+          </div>
+          <div class="imp-solve"><div class="imp-field"><label for="impTarget" data-imp-label="target">Target impedance</label><div class="imp-unit"><input id="impTarget" type="number" min="10" max="250" step="1" value="50"><span>Ω</span></div></div><button class="btn imp-solve-btn" id="impSolveBtn" data-imp-label="solve">Solve width</button></div>
+          <p class="imp-small" data-imp-label="sample">Preliminary estimate · not a fabrication specification</p>
+        </div>
+        <div class="imp-workarea">
+          <div class="imp-canvas-title" data-imp-label="outline">Cross-section (schematic)</div>
+          <svg id="impSvg" viewBox="0 0 620 310" xmlns="http://www.w3.org/2000/svg" aria-label="Trace geometry cross-section" role="img"></svg>
+          <div class="imp-method"><span data-imp-label="model">Calculation model</span><strong id="impMethod">—</strong></div>
+        </div>
+        <div class="imp-readouts">
+          <div class="imp-primary" id="impResultCard"><span id="impKind">Z₀</span><strong id="impMainResult">— Ω</strong><small id="impSubResult">—</small></div>
+          <div class="imp-reading"><span data-imp-label="eps">Effective Dk</span><strong id="impEps">—</strong></div>
+          <div class="imp-reading"><span data-imp-label="delay">Delay</span><strong id="impDelay">—</strong></div>
+          <div class="imp-reading"><span data-imp-label="height">Dielectric separation</span><strong id="impHeight">—</strong></div>
+          <div class="imp-reading"><span data-imp-label="reference">Reference plane</span><strong id="impReference">—</strong></div>
+        </div>
+      </div>
+      <div class="imp-bottom">
+        <div class="imp-tol">
+          <div class="group-label" data-imp-label="tolerance">TOLERANCE EXPLORER</div>
+          <div class="imp-tol-inputs">
+            <label>W ±<input id="impTolW" type="number" min="0" max="30" step="1" value="10"><span>%</span></label>
+            <label>H ±<input id="impTolH" type="number" min="0" max="30" step="1" value="10"><span>%</span></label>
+            <label>T ±<input id="impTolT" type="number" min="0" max="30" step="1" value="10"><span>%</span></label>
+            <label id="impTolSField">S ±<input id="impTolS" type="number" min="0" max="30" step="1" value="10"><span>%</span></label>
+            <label>Dk ±<input id="impTolER" type="number" min="0" max="30" step="1" value="5"><span>%</span></label>
+          </div>
+          <div class="imp-range-metrics"><div><span data-imp-label="lower">Minimum</span><strong id="impTolMin">—</strong></div><div><span data-imp-label="nominal">Nominal</span><strong id="impTolNominal">—</strong></div><div><span data-imp-label="upper">Maximum</span><strong id="impTolMax">—</strong></div></div>
+          <div class="imp-bar" id="impTolBar"><span id="impTolIndicator"></span></div>
+          <p class="imp-small" data-imp-label="toleranceNote">32 worst-case corners; not a manufacturing distribution.</p>
+        </div>
+        <div class="imp-notices" id="impIssue" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+    </div>
+    <section class="table-panel" aria-label="Layer specification">
+      <div class="section-heading table-heading"><div><span class="eyebrow" data-i18n="specification">DESIGN DATA</span><h2 data-i18n="layerSpecification">Layer specification</h2></div><div class="table-tools"><button class="btn" id="addDielectricBtn" data-i18n="splitSelected">Split dielectric</button><button class="btn" id="removeDielBtn" data-i18n="mergeSelected">Merge dielectric</button></div></div>
+      <div class="table-scroll"><table><thead><tr><th>#</th><th data-i18n="layer">Layer</th><th data-i18n="kind">Type</th><th data-i18n="thickness">Thickness</th><th data-i18n="material">Material</th><th>ε<sub>r</sub></th><th>tan δ</th><th data-i18n="role">Role</th><th data-i18n="lock">Lock</th></tr></thead><tbody id="layerTable"></tbody></table></div>
+      <div class="table-caption"><span id="tableCount"></span><span data-i18n="editableTable">Select a row; edit precise values in the inspector.</span></div>
+    </section>
+  </main>
+  <aside class="sidebar sidebar-right"><div class="pane-title"><span class="eyebrow" data-i18n="propertiesTag">CONTEXT INSPECTOR</span><h2 data-i18n="properties">Properties</h2></div><div class="pane-scroll" id="inspector"></div></aside>
+</div>
+<footer class="statusbar"><div><span class="status-dot"></span><span id="statusText" data-i18n="localReady">Local engine ready</span><span class="status-divider">│</span><span data-i18n="noCloud">No cloud connection required</span></div><div><span id="validationStatus">—</span><span class="status-divider">│</span><span data-i18n="version">v0.2 preview</span></div></footer>
+</div>
+<input id="fileInput" type="file" hidden accept=".json,.kicad_pcb,.txt,application/json,text/plain">
+<dialog id="helpDialog"><div class="dialog-top"><h2 data-i18n="helpTitle">Stackup Studio · Help</h2><button id="closeHelp" class="btn">✕</button></div><div id="helpContent"></div></dialog>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<script src="./impedance-engine.js" defer></script><script src="./app.js" defer></script><script src="./impedance-ui.js" defer></script>
+</body></html>
