@@ -90,18 +90,19 @@ function drawCross(result){
 }
 function drawVia(v){const svg=$('viaSvg');if(!svg)return;
  const dk=document.documentElement.dataset.theme==='dark',ink=dk?'#e2eff5':'#34546b',grid=dk?'#2b4453':'#d4e4ea';
- const n=Math.max(2,Math.min(12, v.ok?v.viasPerRow:6));
+ const actualCount=v.ok?v.viasPerRow:6;
+ const n=Math.max(2,Math.min(36,actualCount));const viaRadius=Math.min(9,Math.max(2.2,169/Math.max(1,n-1)*.38));
  let out=`<rect width="620" height="230" rx="8" fill="${dk?'#101f2c':'#edf5f8'}"/><defs><pattern id="viaGrid" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M25 0H0V25" fill="none" stroke="${grid}" stroke-width=".7"/></pattern></defs><rect width="620" height="230" fill="url(#viaGrid)"/>`;
  const traceW=paired()?15:22,traceGap=paired()?17:0,x1=310-(paired()?traceW+traceGap/2:traceW/2),viaLeft=x1-70,viaRight=(paired()?310+traceGap/2+traceW:310+traceW/2)+70;
  out+=`<rect x="${x1}" y="24" width="${traceW}" height="172" rx="3" fill="#dba365"/>`;
  if(paired())out+=`<rect x="${310+traceGap/2}" y="24" width="${traceW}" height="172" rx="3" fill="#dba365"/>`;
  for(const x of [viaLeft,viaRight]){
   out+=`<path d="M${x} 23V198" stroke="#4c9a89" stroke-width="8" opacity=".25"/>`;
-  for(let i=0;i<n;i++){const y=27+i*169/(n-1);out+=`<circle cx="${x}" cy="${y}" r="9" fill="#d5a064" stroke="#f0cd91" stroke-width="2"/><circle cx="${x}" cy="${y}" r="4.4" fill="${dk?'#122531':'#edf5f8'}"/>`;
+  for(let i=0;i<n;i++){const y=27+i*169/(n-1);out+=`<circle cx="${x}" cy="${y}" r="${viaRadius}" fill="#d5a064" stroke="#f0cd91" stroke-width="${viaRadius>4?1.3:.6}"/><circle cx="${x}" cy="${y}" r="${viaRadius*.44}" fill="${dk?'#122531':'#edf5f8'}"/>`;
   }
  }
  out+=`<path d="M${viaRight+18} 27V${27+169/(n-1)}" stroke="${ink}" stroke-width="1.5"/><text x="${viaRight+25}" y="45" font-size="12" fill="${ink}">P</text>`;
- out+=`<text x="310" y="218" font-size="11" fill="${ink}" text-anchor="middle">${de()?'Leitungslänge':'Fence length'} ${fmt(state.via.lengthMM,1)} mm · ${v.ok?v.totalVias:'—'} Vias</text>`;
+ out+=`<text x="310" y="218" font-size="11" fill="${ink}" text-anchor="middle">${de()?'Leitungslänge':'Fence length'} ${fmt(state.via.lengthMM,1)} mm · ${v.ok?v.totalVias:'—'} Vias${actualCount>n?(de()?' (Reihen schematisch)':' (rows schematic)'):''}</text>`;
  svg.innerHTML=out;
 }
 function viaRender(r){const refs=E.findRefs(project(),state.signalId);
