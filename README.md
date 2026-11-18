@@ -1,4 +1,4 @@
-# SIMONLATION Stackup & Impedance Studio · 0.4 beta
+# SIMONLATION Stackup & Impedance Studio · 0.4.1 beta
 
 **Engineering preview · 18 November 2026 · © Simon Mark**
 
@@ -15,6 +15,14 @@ Local-first, browser-installable PCB stackup editor with an integrated analytica
 4. Choose **Solve W (S fixed)**, **Solve S (W fixed)**, or **W+S minimum-change geometry**. With a single Zdiff target infinitely many geometries can meet the target; the "both" mode selects the closest candidate in relative logarithmic parameter space to the user's initial values.
 5. Set ± W/H/T/S in percent or µm and Dk in percent. Inspect 16 or 32 deterministic corner extremes and the ranked sensitivity bars; these are **not statistical production distributions**.
 6. Configure GND via fences on either side of a single-ended or differential pair. Provide maximum relevant frequency, pad/drill/offset/pitch/length and limits. The tool shows λg/10 and λg/20 layout pitch rules, total vias, top and sectional views and nominal clearances. Export the estimate as JSON.
+
+## New in 0.4.1 — visual workbench and via placement
+
+- **Clear desktop layout:** stackup cross-section and impedance workspace share a common top row and approximately matching panel heights; the stackup card now includes the active signal/reference-layer context rather than wasting its lower area. On smaller screens the sections stack vertically.
+- **Useful schematic view:** coupled signal traces and gap are enlarged for clarity, with numeric W/S/H labels remaining authoritative. `Schematic` is the default; `1:1 XY` provides common X/Y scaling with adaptive zoom (not a literal physical size on a screen).
+- **Vias optional in the cross-section:** `Show GND vias` is off by default and available in supported microstrip schematic views. Small, simplified plated barrels replace the large, dominant circular rings. The sketch is deliberately not a physical pad-to-trace scale drawing.
+- **Via Fence placement:** `Off / Left / Right / Both sides` changes the top-view layout, row count and via totals. The full via dimensions, spacing rules and frequency-dependent pitch remain in the separate Via Fence section. None of these visualization choices artificially adjusts the calculated line impedance.
+- **Engineering detail panels:** tolerance ranges and model limits are moved below the main workbench for better focus; Via Fence sits in its own two-column area on sufficiently wide displays.
 
 ## What is calculated, and what isn't
 
@@ -57,4 +65,4 @@ The publicly hosted web app does **not** hide client-side source code. Keeping t
 
 ## v1.0 status
 
-This build is intentionally labeled **0.4 beta**, not 1.0. Before 1.0, independent field-model validation, manufacturer representative data, legal review and actual online-install/offline-restart testing are mandatory. See `docs/V1_READINESS.md`.
+This build is intentionally labeled **0.4.1 beta**, not 1.0. Before 1.0, independent field-model validation, manufacturer representative data, legal review and actual online-install/offline-restart testing are mandatory. See `docs/V1_READINESS.md`.

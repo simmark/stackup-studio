@@ -173,3 +173,58 @@
 .imp-floating-editor div{display:flex;gap:5px}
 .imp-floating-editor input{width:100%;min-width:0;height:34px;font-size:12px}
 .imp-floating-editor button{background:var(--accent);color:var(--accent-text);font-size:15px;padding:3px 10px;font-weight:750}
+
+/* v0.4.1 — consistent-height main workbench, clear plot visibility, and separate inspector panels */
+.design-workbench{align-items:stretch}
+.design-workbench>.editor-panel,.design-workbench>.imp-panel{align-self:stretch;min-height:0}
+.design-workbench:not(.is-stacked) .editor-panel{display:flex;flex-direction:column}
+.design-workbench:not(.is-stacked) .editor-panel .diagram-area{flex:1;min-height:380px;height:auto}
+.design-workbench:not(.is-stacked) .editor-panel .diagram-footer{margin-top:auto}
+.design-workbench:not(.is-stacked) .imp-panel{display:flex;flex-direction:column}
+.design-workbench:not(.is-stacked) .imp-panel .imp-workspace{flex:1}
+.design-workbench:not(.is-stacked) .imp-panel .imp-workarea{justify-content:space-between}
+.design-workbench:not(.is-stacked) .imp-panel .imp-readouts{margin-top:auto}
+.imp-view-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.imp-via-toggle{display:inline-flex;gap:7px;align-items:center;white-space:nowrap;font-size:10px;font-weight:720;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:var(--panel);cursor:pointer;min-height:30px}
+.imp-via-toggle:has(input:checked){color:var(--accent);border-color:#338c8999;background:var(--softaccent)}
+.imp-via-toggle:has(input:disabled){opacity:.45;cursor:not-allowed}
+.imp-via-toggle input{width:15px;height:15px;margin:0;cursor:pointer}
+.tolerance-panel,.via-section{background:var(--panel);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);margin-top:14px;overflow:hidden;min-width:0}
+.detail-panel-heading{border-bottom:1px solid var(--line);padding:12px 17px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.detail-panel-heading strong{font-size:14px;color:var(--text)}
+.tolerance-panel .imp-bottom{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(250px,1fr)}
+.tolerance-panel .imp-tol{padding:14px 17px}
+.tolerance-panel .imp-notices{max-height:none}
+.via-section{padding:17px 18px 20px}
+.via-placement-control{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel2);margin-bottom:13px}
+.via-placement-control label{font-size:11px;font-weight:740;color:var(--text)}
+.via-placement-control select{font-size:11px;height:35px;min-width:156px}
+.via-placement-control>span{color:var(--muted);font-size:10px;line-height:1.5;flex:1 1 195px}
+.via-preview-hint{font-size:10px;color:var(--muted);padding:0 14px 7px}
+/* Decrease visual dead space without shrinking actual physical values. */
+.design-workbench:not(.is-stacked) .imp-controls{gap:8px 12px}
+.design-workbench:not(.is-stacked) .imp-workarea #impSvg{max-height:278px}
+.design-workbench:not(.is-stacked) .imp-primary strong{font-size:clamp(19px,1.55vw,25px)}
+@media(max-width:1340px){.design-workbench:not(.is-stacked) .editor-panel .diagram-area{min-height:355px;height:360px}.tolerance-panel .imp-bottom{grid-template-columns:minmax(0,1fr) minmax(250px,.9fr)}}
+@media(max-width:1020px){.tolerance-panel .imp-bottom{grid-template-columns:1fr}.tolerance-panel .imp-notices{border-left:0;border-top:1px solid var(--line)}}
+@media(max-width:850px){.design-workbench:not(.is-stacked) .editor-panel .diagram-area{height:330px;min-height:0}.via-placement-control{align-items:flex-start}}
+@media(max-width:540px){.imp-view-actions{width:100%;justify-content:space-between;gap:6px}.imp-via-toggle{padding:7px 8px}.imp-canvas-head{align-items:flex-start}.via-section{padding:13px 11px 17px}.tolerance-panel .imp-tol{padding:12px}.detail-panel-heading{padding:11px 13px}}
+
+/* Layer context uses otherwise-empty space in the stackup editor to make it an informative engineering panel. */
+.design-workbench:not(.is-stacked) .editor-panel .diagram-area{flex:0 0 auto;min-height:0;height:clamp(320px,27vw,405px)}
+.design-workbench:not(.is-stacked) .editor-panel .diagram-footer{margin-top:0}
+.stack-route-context{padding:15px 17px 17px;border-top:1px solid var(--line);background:var(--panel2);flex:1;display:flex;flex-direction:column;gap:11px;min-height:155px}
+.stack-route-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.stack-route-title strong{font-size:12px;font-weight:740}
+.stack-route-title small,.stack-route-context p{font-size:10px;color:var(--muted);line-height:1.5}
+.stack-route-context p{margin:auto 0 0}
+.stack-route-data{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.stack-route-data>div{padding:10px 11px;background:var(--panel);border:1px solid var(--line);border-radius:6px;min-width:0}
+.stack-route-data span{display:block;font-size:9px;color:var(--muted);letter-spacing:.2px;margin-bottom:6px}
+.stack-route-data strong{display:block;font-size:12px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stack-route-data .unavailable{color:var(--muted)}
+/* Use the available horizontal space for the independent Via Fence designer. */
+@media (min-width:1480px){.via-section .via-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.08fr)}.via-section .via-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1340px){.design-workbench:not(.is-stacked) .editor-panel .diagram-area{height:370px}}
+@media(max-width:850px){.stack-route-context{display:none}.design-workbench:not(.is-stacked) .editor-panel .diagram-area{height:330px}}
+@media(max-width:540px){.design-workbench:not(.is-stacked) .editor-panel .diagram-area{height:275px}}

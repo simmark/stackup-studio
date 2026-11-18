@@ -5,12 +5,12 @@
 <meta name="theme-color" content="#0b121e" id="themeMeta"><meta name="application-name" content="SIMONLATION Stackup Studio">
 <meta name="description" content="Free, local-first PCB layer stackup designer. Design copper and dielectric layers, import KiCad stackups, and export projects for impedance workflows.">
 <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>Stackup Studio | SIMONLATION</title><link rel="stylesheet" href="./styles.css?v=0.4.0">
+<title>Stackup Studio | SIMONLATION</title><link rel="stylesheet" href="./styles.css?v=0.4.1">
 </head>
 <body>
 <div class="app" id="app">
 <header class="topbar">
-  <div class="brand"><div class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></div><div class="brand-word"><b>SIMON<span>LATION</span></b><small>STACKUP STUDIO</small></div><span class="beta-tag">BETA 0.4</span></div>
+  <div class="brand"><div class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></div><div class="brand-word"><b>SIMON<span>LATION</span></b><small>STACKUP STUDIO</small></div><span class="beta-tag">BETA 0.4.1</span></div>
   <nav class="top-actions" aria-label="Project actions">
     <button class="btn icon-btn" id="undoBtn" title="Undo · Ctrl+Z" aria-label="Undo">↶</button><button class="btn icon-btn" id="redoBtn" title="Redo · Ctrl+Shift+Z" aria-label="Redo">↷</button>
     <span class="sep"></span><button class="btn" id="openBtn" data-i18n="open">Open</button>
@@ -47,6 +47,11 @@
       <div class="section-subline"><span data-i18n="clickLayer">Select any layer in the diagram or table to inspect and edit.</span><span id="scaleNote">Enhanced layer visibility</span></div>
       <div class="diagram-area"><svg id="stackSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" role="img" aria-label="Physical PCB stackup cross section"><text x="400" y="210">Loading...</text></svg></div>
       <div class="diagram-footer"><span><i class="legend-chip copper"></i><span data-i18n="copper">Copper</span></span><span><i class="legend-chip core"></i>Core</span><span><i class="legend-chip prepreg"></i>Prepreg</span><span><i class="legend-chip soldermask"></i><span data-i18n="maskShort">Mask</span></span><span class="foot-right" data-i18n="diagramNotice">Schematic preview · dimensions are numerical</span></div>
+      <div class="stack-route-context" id="stackRouteContext" aria-live="polite" aria-label="Routing layer and reference plane">
+        <div class="stack-route-title"><strong id="stackContextTitle">Signalreferenz</strong><small id="stackContextHint">Aus dem Leiterplattenaufbau</small></div>
+        <div class="stack-route-data" id="stackContextData"></div>
+        <p id="stackContextFoot">Die Werte werden aus den ausgewählten Leiterplattenlagen übernommen.</p>
+      </div>
     </section>
     <section class="imp-panel" id="impPanel" aria-label="PCB Impedance Lab">
       <div class="section-heading imp-title"><div><span class="eyebrow" data-imp-label="label">ANALYTICAL QUICK ESTIMATE</span><h2 data-imp-label="title">PCB Impedance Lab</h2></div><div class="imp-section-actions"><span class="imp-pill">QUASI-STATIC</span><button class="btn" id="impExportBtn" data-imp-label="export">Export result JSON</button></div></div>
@@ -63,7 +68,7 @@
           <p class="imp-small" data-imp-label="sample">Preliminary estimate · not a fabrication specification</p>
         </div>
         <div class="imp-workarea">
-          <div class="imp-canvas-head"><div class="imp-canvas-title" data-imp-label="outline">Cross-section (schematic)</div><div class="segmented imp-scale-switch"><button type="button" data-imp-view="schematic" class="active">Schematic</button><button type="button" data-imp-view="metric">1:1 XY</button></div></div><p class="imp-canvas-tip" data-imp-label="editTip">Click W, S or H to edit · approximate visual proportions</p>
+          <div class="imp-canvas-head"><div class="imp-canvas-title" data-imp-label="outline">Cross-section (schematic)</div><div class="imp-view-actions"><label class="imp-via-toggle" for="impShowVias" title="Optional drawing only – does not alter impedance calculation"><input type="checkbox" id="impShowVias"><span data-imp-label="viaPreview">Show GND vias</span></label><div class="segmented imp-scale-switch"><button type="button" data-imp-view="schematic" class="active">Schematic</button><button type="button" data-imp-view="metric">1:1 XY</button></div></div></div><p class="imp-canvas-tip" data-imp-label="editTip">Click W / S / H to edit · visualization does not modify the impedance model</p>
           <svg id="impSvg" viewBox="0 0 620 310" xmlns="http://www.w3.org/2000/svg" aria-label="Trace geometry cross-section" role="img"></svg>
           <div class="imp-method"><span data-imp-label="model">Calculation model</span><strong id="impMethod">—</strong></div>
         </div>
@@ -75,6 +80,10 @@
           <div class="imp-reading"><span data-imp-label="reference">Reference plane</span><strong id="impReference">—</strong></div>
         </div>
       </div>
+    </section>
+    </div>
+    <section class="tolerance-panel" id="toleranceSection" aria-label="Impedance sensitivity and model limits">
+      <header class="detail-panel-heading"><span class="eyebrow" data-imp-label="manufacturing">MANUFACTURING ANALYSIS</span><strong data-imp-label="toleranceTitle">Tolerance &amp; model limits</strong></header>
       <div class="imp-bottom">
         <div class="imp-tol">
           <div class="group-label" data-imp-label="tolerance">TOLERANCE EXPLORER</div>
@@ -91,8 +100,10 @@
         </div>
         <div class="imp-notices" id="impIssue" role="status" aria-live="polite"></div>
       </div>
+    </section>
       <section class="via-section" id="viaSection" aria-label="Via fence designer">
         <div class="via-head"><div><span class="eyebrow">PCB RF / SI · LAYOUT ADVISOR</span><h3 data-imp-label="viaTitle">Via Fence Designer</h3><p data-imp-label="viaSubtitle">Ground stitching around single-ended or differential traces · geometric rules only</p></div><span class="imp-pill" data-imp-label="viaHeuristic">LAYOUT GUIDELINE</span></div>
+        <div class="via-placement-control"><label for="viaPlacement" data-imp-label="viaPlacementLabel">Via rows</label><select id="viaPlacement" aria-label="Via fence placement"><option value="both">Both sides</option><option value="left">Left only</option><option value="right">Right only</option><option value="none">Off</option></select><span data-imp-label="viaPlacementHint">Placement controls the number and position of GND stitching rows.</span></div>
         <div class="via-layout">
           <div class="via-form">
             <div class="via-grid">
@@ -114,8 +125,6 @@
           </div>
         </div>
       </section>
-    </section>
-    </div>
     <section class="table-panel" aria-label="Layer specification">
       <div class="section-heading table-heading"><div><span class="eyebrow" data-i18n="specification">DESIGN DATA</span><h2 data-i18n="layerSpecification">Layer specification</h2></div><div class="table-tools"><button class="btn" id="addDielectricBtn" data-i18n="splitSelected">Split dielectric</button><button class="btn" id="removeDielBtn" data-i18n="mergeSelected">Merge dielectric</button></div></div>
       <div class="table-scroll"><table><thead><tr><th>#</th><th data-i18n="layer">Layer</th><th data-i18n="kind">Type</th><th data-i18n="thickness">Thickness</th><th data-i18n="material">Material</th><th>ε<sub>r</sub></th><th>tan δ</th><th data-i18n="role">Role</th><th data-i18n="lock">Lock</th></tr></thead><tbody id="layerTable"></tbody></table></div>
@@ -124,7 +133,7 @@
   </main>
   <aside class="sidebar sidebar-right"><div class="pane-title"><span class="eyebrow" data-i18n="propertiesTag">CONTEXT INSPECTOR</span><h2 data-i18n="properties">Properties</h2></div><div class="pane-scroll" id="inspector"></div></aside>
 </div>
-<footer class="statusbar"><div><span class="status-dot"></span><span id="statusText" data-i18n="localReady">Local engine ready</span><span class="status-divider">│</span><span data-i18n="noCloud">No cloud connection required</span></div><div><span id="validationStatus">—</span><span class="status-divider">│</span><span data-i18n="version">v0.4 beta</span></div></footer>
+<footer class="statusbar"><div><span class="status-dot"></span><span id="statusText" data-i18n="localReady">Local engine ready</span><span class="status-divider">│</span><span data-i18n="noCloud">No cloud connection required</span></div><div><span id="validationStatus">—</span><span class="status-divider">│</span><span data-i18n="version">v0.4.1 beta</span></div></footer>
 </div>
 <input id="fileInput" type="file" hidden accept=".json,.kicad_pcb,.txt,application/json,text/plain">
 <dialog id="helpDialog"><div class="dialog-top"><h2 data-i18n="helpTitle">Stackup Studio · Help</h2><button id="closeHelp" class="btn">✕</button></div><div id="helpContent"></div></dialog>

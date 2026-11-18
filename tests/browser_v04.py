@@ -32,7 +32,7 @@ try:
     print('OPT',page.locator('#impMainResult').inner_text(),'TARGET',page.locator('#impTargetDelta').inner_text(),'warnings',page.locator('#impIssue').inner_text()[:130]);assert '100' in page.locator('#impMainResult').inner_text()
     page.locator('#impUnitW').select_option('um');page.locator('#impTolW').fill('10');page.locator('#viaFrequency').fill('5');page.screenshot(path=str(root/'preview-v04-differential.png'),full_page=True)
     page.locator('[data-imp-view=metric]').click();assert page.locator('[data-imp-view=metric]').get_attribute('class').find('active')>=0
-    page.locator('#impSvg [data-edit=impWidth]').click();assert page.locator('#impFloatingEditor input').count()==1;page.locator('#impFloatingEditor input').fill('0.19');page.locator('#impFloatingEditor button').click();assert abs(float(page.locator('#impWidth').input_value())-0.19)<.00001
+    page.locator('#impSvg .imp-label-action[data-edit=impWidth]').click();assert page.locator('#impFloatingEditor input').count()==1;page.locator('#impFloatingEditor input').fill('0.19');page.locator('#impFloatingEditor button').click();assert abs(float(page.locator('#impWidth').input_value())-0.19)<.00001
     page.locator('#impSvg [data-edit=impH]').click();assert page.evaluate('document.activeElement.id')=='inspThickness'
    if width==390:page.screenshot(path=str(root/'preview-v04-mobile.png'),full_page=True)
    c.close()

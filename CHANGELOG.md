@@ -1,5 +1,14 @@
 # SIMONLATION Stackup Studio · Changelog
 
+## 0.4.1-beta (2026-11-18)
+
+- Improved responsive desktop workbench: side-by-side Stackup / Impedance with similar card heights, selected signal/reference context and full-width engineering sections below.
+- Revised line cross-section: W and S are visually enlarged in schematic mode, numeric dimensions remain exact, and equal-XY-scale remains optional.
+- Removed oversized default GND via pad rings. Sectional vias are now a small **optional** schematic-only preview; the independent Via Fence top view is retained below.
+- Added `Off / Left / Right / Both` Via Fence placement. Placement changes row counts, top view and exports, but never pretends to correct impedance.
+- Cache version bump to `simonlation-stackup-v0.4.1`, language and footer-version cleanup, regression tests including preview toggle, placement, target solver, mobile widths and JSON roundtrip.
+- Caution: stackup materials and differential coupling remain estimates, not validated field-solver output.
+
 ## 0.4.0-beta (2026-11-18)
 
 - **W / S inverse design:** optimize width with fixed gap, gap with fixed width, or find an achievable W+S pair using a documented minimum-change preference around the current geometry. Impossible geometries return a clear error.

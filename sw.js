@@ -1,5 +1,5 @@
-/* SIMONLATION Stackup Studio 0.4. Scoped PWA shell, no CDN or analytics. */
-const CACHE='simonlation-stackup-v0.4';
+/* SIMONLATION Stackup Studio 0.4.1. Scoped PWA shell, no CDN or analytics. */
+const CACHE='simonlation-stackup-v0.4.1';
 const FILES=['./','./index.html','./app.js','./impedance-engine.js','./impedance-ui.js','./via-fence-engine.js','./styles.css','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install', event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
