@@ -1,15 +1,9 @@
-"""Regression test of v0.3 two-column desktop, mobile stack, layout toggle, and offline."""
-import asyncio, http.server, functools, threading
+"""Regression test: 2-column desktop, stacked mobile, layout toggle, no horizontal overflow."""
+import asyncio
 from pathlib import Path
 from playwright.async_api import async_playwright
 ROOT=Path(__file__).resolve().parent.parent
-LINK=ROOT.parent/'stackup-studio'
-if not LINK.exists(): LINK.symlink_to(ROOT,target_is_directory=True)
-class Quiet(http.server.SimpleHTTPRequestHandler):
- def log_message(self,*a): pass
 async def main():
- server=http.server.ThreadingHTTPServer(('127.0.0.1',0),functools.partial(Quiet,directory=str(ROOT.parent)))
- thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
  try:
   async with async_playwright() as p:
    browser=await p.chromium.launch(headless=True,executable_path='/usr/bin/chromium',args=['--no-sandbox'])
@@ -46,5 +40,5 @@ async def main():
     await context.close()
    await browser.close()
    print('PASS responsive 1613/1440/1280/820/390; side-by-side toggle; no page errors')
- finally:server.shutdown()
+ finally:pass
 if __name__=='__main__':asyncio.run(main())

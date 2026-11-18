@@ -32,8 +32,8 @@ async def main():
     await page.locator('#themeBtn').click()
     await page.evaluate('navigator.serviceWorker.ready')
     await page.wait_for_function('navigator.serviceWorker.controller!==null',timeout=20000)
-    assert await page.evaluate('caches.has("simonlation-stackup-v0.2.0")')
-    cached=await page.evaluate('caches.open("simonlation-stackup-v0.2.0").then(c=>c.keys().then(a=>a.map(x=>new URL(x.url).pathname)))')
+    assert await page.evaluate('caches.has("simonlation-stackup-standalone-v0.3.0")')
+    cached=await page.evaluate('caches.open("simonlation-stackup-standalone-v0.3.0").then(c=>c.keys().then(a=>a.map(x=>new URL(x.url).pathname)))')
     assert '/stackup-studio/impedance-engine.js' in cached
     assert '/stackup-studio/impedance-ui.js' in cached
     await ctx.set_offline(True)
@@ -41,7 +41,7 @@ async def main():
     await page.wait_for_function('!!window.SimonlationImpedanceUI && !!window.SimonlationStackup')
     assert await page.evaluate('SimonlationImpedanceUI.result().ok')
     assert not errors,errors
-    print('PASS v0.2 PWA: manifest subpath, service-worker cache, offline reload and impedance calculation; screenshot exports')
+    print('PASS v0.3 PWA: manifest subpath, service-worker cache, offline reload and impedance calculation; screenshot exports')
     await browser.close()
  finally:
   server.shutdown()

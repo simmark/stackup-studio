@@ -95,4 +95,4 @@ The cross-section and Impedance Lab share a two-column central workbench on desk
 
 Data and preferences are namespaced separately from the previous CADVIEW subdirectory installation. When new-repository keys are absent, the app imports the previous same-origin localStorage project/preferences once; data from a different browser profile cannot be migrated automatically, so use Project Export/Open if needed. The new SW cache namespace only cleans its own caches.
 
-If the GitHub repository uses GitHub Actions Pages deployment, enable **Settings → Pages → Build and deployment → Source: GitHub Actions**. GitHub Pages only serves public static files. Calculation and project operations run locally in the browser; do not assume public source code is secret.
+This repository publishes using the existing GitHub Pages branch-based deployment. GitHub Pages only serves public static files. Calculation and project operations run locally in the browser; do not assume public source code is secret.
