@@ -1,4 +1,4 @@
-/* SIMONLATION Stackup / Impedance / Via Fence workbench · local-first beta 0.4.1 */
+/* SIMONLATION Stackup / Impedance / Via Fence workbench · local-first beta 0.4.2 */
 (()=>{'use strict';
 const $=id=>document.getElementById(id), E=window.SimonlationImpedance,V=window.SimonlationViaFence;
 const KEY='simonlation-stackup-studio-impedance-v0.3',OLD='simonlation-impedance-v0.2';
@@ -37,7 +37,21 @@ function localError(message){const map={
   'Asymmetric stripline (unequal top/bottom distances). Requires a 2D solver; no symmetric model applied.':'Asymmetrischer Abstand zu den Referenzlagen. Das symmetrische Modell darf hier nicht verwendet werden.',
   'Different Dk values between trace and reference plane. A multilayer field solver is required; no artificial averaged Dk will be used.':'Mehrere unterschiedliche Dk-Werte. Keine unphysikalische εr-Mittelung; Feldsolver nötig.',
   'Different top/bottom Dk values: 2D field solver required.':'Unterschiedliche Dk-Werte oben und unten. 2D-Feldsolver erforderlich.',
-  'Narrow stripline W/(B–T) ≤ 0.35. Cohn wide-strip model not applicable.':'Zu schmale Stripline für das Cohn-Breitstreifenmodell.',
+  'Out of stripline model range: 0.05 ≤ W/B ≤ 10.':'Außerhalb des Stripline-Modellbereichs (0,05 ≤ W/B ≤ 10).',
+  'Copper thickness above model limit (T/B > 0.25).':'Kupferdicke über der Modellgrenze (T/B > 0,25).',
+  'Small top/bottom offset: symmetric stripline model is approximate.':'Leicht ungleiche Abstände oben/unten: Das symmetrische Stripline-Modell ist hier eine Näherung.',
+  'T/H > 0.2: finite thickness correction is near its practical limits.':'T/H > 0,2: Die Dickenkorrektur ist nahe ihrer praktischen Grenze.',
+  'Solder mask loading is not included; actual microstrip impedance can differ.':'Die Lötstoppmaske ist nicht eingerechnet. Mit Maske liegt die Microstrip-Impedanz typischerweise einige Ohm niedriger.',
+  'Delay is the uncoupled-line quasi-static estimate, not odd/even modal delay.':'Die Laufzeit gilt für die ungekoppelte Leitung (quasistatisch), nicht für Gegen-/Gleichtakt getrennt.',
+  'Strong coupling (S/H < 0.5): empirical differential correction may be inaccurate.':'Starke Kopplung (S/H < 0,5): Die empirische Differenzkorrektur kann ungenau sein.',
+  'Zeven/Zcommon are mirrored from the empirical odd-mode factor and are rough indications only.':'Zeven ist aus dem empirischen Kopplungsfaktor abgeleitet und nur ein grober Richtwert.',
+  'Copper T/W > 0.5: approximation is sensitive to sidewall/etch profile.':'Kupfer T/W > 0,5: Das Ergebnis reagiert empfindlich auf Flankenform und Ätzprofil.',
+  'Copper roles do not prove continuous reference-plane coverage. Check actual layout.':'Die Lagenrollen belegen keine durchgehende Referenzfläche. Das Layout prüfen.',
+  'Quasi-static geometry only: no frequency dispersion, roughness, insertion loss, impedance discontinuities or manufacturing verification.':'Nur quasistatische Geometrie: keine Dispersion, Rauheit, Einfügedämpfung, Stoßstellen oder Fertigungsprüfung.',
+  'Target impedance must be between 10 and 250 Ω.':'Die Zielimpedanz muss zwischen 10 und 250 Ω liegen.',
+  'Target not reachable in the geometry/model validity range (width 0.025–5 mm).':'Ziel im gültigen Breitenbereich 0,025–5 mm nicht erreichbar.',
+  'Width must be between 0.025 and 5 mm.':'Die Breite muss zwischen 0,025 und 5 mm liegen.',
+  'Gap must be between 0.025 and 5 mm.':'Der Abstand muss zwischen 0,025 und 5 mm liegen.',
   'Tolerance must be finite and non-negative.':'Toleranzen müssen endlich und nichtnegativ sein.',
   'Tolerance range crosses unsupported geometry: ':'Toleranzen überschreiten die Modellgrenzen: ',
   'Target not reachable with the fixed width in the model validity range (gap 0.025–5 mm).':'Ziel mit festgehaltener Breite im Gap-Bereich 0,025–5 mm nicht erreichbar.',
@@ -160,6 +174,14 @@ function viaRender(r){
   $('viaWarnings').innerHTML=`<p>${safe(de()?'Pitch mit größtem benachbartem Substrat-Dk ('+fmt(effective,2)+') berechnet, nicht mit εeff der Leitung.':'Pitch uses largest adjacent substrate Dk ('+fmt(effective,2)+'), not trace εeff.')}</p><div class="via-check-grid">${lastVia.checks.map(c=>`<span class="${c.pass?'pass':'fail'}">${c.pass?'✓':'!'} ${safe(c.name)} <small>${safe(c.detail)}</small></span>`).join('')}</div><p>${safe(de()?'Keine Impedanzkorrektur durch Vias oder Masseflächen. Geometrieprüfung und Pitch-Richtwert.':'No impedance correction for vias or nearby ground. Geometric checks and pitch guideline only.')}</p>`;
  }else{$('viaResults').innerHTML='';$('viaWarnings').textContent=localError(lastVia.error);}
 }
+function renderHeadline(r,diff){const box=$('impHeadline');if(!box)return;
+ if(!r.ok){box.className='imp-headline invalid';box.innerHTML=`<span class="imp-h-kind">${diff?'Zdiff':'Z₀'}</span><strong>—</strong><span class="imp-h-note">${safe(localError(r.error))}</span>`;return;}
+ const actual=r.zDiff??r.z0,delta=actual-state.target,ok=Math.abs(delta)<.5,pct=100*delta/state.target;
+ const mask=state.mode.includes('microstrip')&&project().maskEnabled;
+ const chips=[r.quality==='analytical'?(de()?'analytisch':'analytical'):(de()?'empirisch':'empirical')];
+ if(mask)chips.push(de()?'ohne Maskeneinfluss':'mask not included');
+ box.className='imp-headline '+(ok?'good':'warn');
+ box.innerHTML=`<span class="imp-h-kind">${diff?'Zdiff':'Z₀'}</span><strong>${fmt(actual,1)} Ω</strong><span class="imp-h-target">${de()?'Ziel':'Target'} ${fmt(state.target,0)} Ω · ${delta>=0?'+':''}${fmt(pct,1)} %</span><span class="imp-h-chips">${chips.map(c=>`<i>${safe(c)}</i>`).join('')}</span>`;}
 function render(){const signalLayers=syncLayer();
  document.querySelectorAll('[data-imp-label]').forEach(el=>el.textContent=t(el.dataset.impLabel));
  $('impMode').innerHTML=Object.entries(modeNames()).map(([k,n])=>`<option value="${safe(k)}" ${k===state.mode?'selected':''}>${safe(n)}</option>`).join('');
@@ -174,6 +196,10 @@ function render(){const signalLayers=syncLayer();
  $('impShowVias').checked=state.showCrossVias&&state.via.placement!=='none';
  $('impShowVias').disabled=state.view==='metric'||strip()||state.via.placement==='none';
  $('impShowVias').title=state.view==='metric'?(de()?'Vias nur in der schematischen Ansicht':'Vias only available in schematic view'):(strip()?(de()?'Bei Stripline nur in der Draufsicht':'For stripline vias are shown in top view only'):'');
+ const viewLabels=de()?{schematic:'Schematisch',metric:'Maßstab 1:1'}:{schematic:'Schematic',metric:'True scale'};
+ document.querySelectorAll('[data-imp-view]').forEach(el=>{el.textContent=viewLabels[el.dataset.impView]||el.textContent;});
+ const optLabels=de()?{width:'W anpassen · S fest',spacing:'S anpassen · W fest',balanced:'W und S'}:{width:'Solve W · keep S',spacing:'Solve S · keep W',balanced:'W and S'};
+ for(const o of $('impOptimize').options)o.textContent=optLabels[o.value]||o.textContent;
  document.querySelectorAll('[data-imp-view]').forEach(el=>{el.classList.toggle('active',el.dataset.impView===state.view);el.setAttribute('aria-pressed',String(el.dataset.impView===state.view));});
  for(const k of ['w','h','t','s','er']){setValue('impTol'+k.toUpperCase(),state.tolerances[k]);if(k!=='er')$('impUnit'+k.toUpperCase()).value=state.toleranceUnits[k];}
  $('impTolSField').classList.toggle('imp-muted',!diff);$('impTolS').disabled=!diff;$('impUnitS').disabled=!diff;
@@ -181,7 +207,8 @@ function render(){const signalLayers=syncLayer();
  const lim=Object.fromEntries(['w','h','t','s','er'].map(k=>[k,{value:Number(state.tolerances[k]),unit:k==='er'?'percent':state.toleranceUnits[k]}]));
  lastTolerance=r.ok?E.toleranceAnalysis(i,lim):null;
  setText('impKind',diff?'Zdiff':'Z₀');setText('impMainResult',r.ok?fmt(r.zDiff??r.z0,2)+' Ω':'— Ω');
- setText('impSubResult',r.ok?(diff?`Zodd ${fmt(r.zOdd,2)} Ω · Zeven ${fmt(r.zEven,2)} Ω`:`Z₀ ${fmt(r.z0,2)} Ω`):t('noValue'));
+ setText('impSubResult',r.ok?(diff?`Zodd ${fmt(r.zOdd,2)} Ω · Zeven ${r.zEvenApproximate?'≈ ':''}${fmt(r.zEven,2)} Ω`:`εeff ${fmt(r.epsEff,3)}`):t('noValue'));
+ renderHeadline(r,diff);
  setText('impEps',r.ok?fmt(r.epsEff,3):'—');setText('impDelay',r.ok?fmt(r.delayPsPerMM,2)+' ps/mm':'—');
  setText('impHeight',r.ok?fmt(r.referenceHeightMM,3)+' mm':'—');setText('impReference',r.ok?r.referenceNames.join(' + '):'—');setText('impMethod',r.ok?r.method:'—');
  // Visible routing reference underneath the stackup cross-section (not an additional solver).
@@ -199,7 +226,8 @@ function render(){const signalLayers=syncLayer();
   routeData.innerHTML=labels.map((label,index)=>`<div><span>${safe(label)}</span><strong class="${values[index]==='—'?'unavailable':''}">${safe(values[index])}</strong></div>`).join('');
  }
  $('impResultCard').classList.toggle('imp-invalid',!r.ok);
- const errorText=r.ok?(de()?'Rechenmodell: '+r.quality+' · Ohne 2D/3D-Feldlösung.':'Model: '+r.quality+' · No 2D/3D field solution.'):localError(r.error);
+ const qualityDe={'analytical':'analytisch','empirical differential estimate':'empirische Differenzschätzung'};
+ const errorText=r.ok?(de()?'Rechenmodell: '+(qualityDe[r.quality]||r.quality)+' · ohne 2D/3D-Feldlösung.':'Model: '+r.quality+' · No 2D/3D field solution.'):localError(r.error);
  $('impIssue').innerHTML=r.ok?`<strong>${safe(t('limits'))}</strong><p>${safe(errorText)}</p><ul>${r.warnings.map(w=>`<li>${safe(localError(w))}</li>`).join('')}</ul>`:`<strong>${safe(t('unsupported'))}</strong><p>${safe(errorText)}</p>`;
  if(r.ok){const actual=r.zDiff??r.z0,delta=actual-state.target;const cls=Math.abs(delta)<.5?'good':'warn';
   $('impTargetDelta').innerHTML=`<span class="${cls}">${de()?'Abweichung zum Ziel':'Error to target'}: ${delta>=0?'+':''}${fmt(delta,2)} Ω (${delta>=0?'+':''}${fmt(100*delta/state.target,1)}%)</span>`;
@@ -215,7 +243,7 @@ function render(){const signalLayers=syncLayer();
  drawCross(r);viaRender(r);save();
 }
 function download(content,name){const blob=new Blob([JSON.stringify(content,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000);}
-function exportResult(){if(!lastResult?.ok)return;download({schema:'com.simonlation.impedance-result',version:2,appVersion:'0.4.1-beta',units:{length:'mm',impedance:'ohm'},geometry:{signalId:state.signalId,mode:state.mode,widthMM:state.widthMM,spacingMM:paired()?state.spacingMM:null},result:lastResult,tolerances:lastTolerance,viaFence:lastVia,stackup:project(),disclaimer:'Models not validated as fabrication impedance or via-induced Z correction.'},'simonlation-impedance.json')}
+function exportResult(){if(!lastResult?.ok)return;download({schema:'com.simonlation.impedance-result',version:2,appVersion:'0.4.2-beta',units:{length:'mm',impedance:'ohm'},geometry:{signalId:state.signalId,mode:state.mode,widthMM:state.widthMM,spacingMM:paired()?state.spacingMM:null},result:lastResult,tolerances:lastTolerance,viaFence:lastVia,stackup:project(),disclaimer:'Models not validated as fabrication impedance or via-induced Z correction.'},'simonlation-impedance.json')}
 function valueInput(id,cb){const el=$(id);el.addEventListener('input',()=>{const v=Number(el.value);if(el.value.trim()===''||!Number.isFinite(v))return;cb(v);render()});el.addEventListener('change',render);el.addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur()});}
 $('impMode').addEventListener('change',()=>{state.mode=$('impMode').value;state.target=paired()?100:50;if(!paired())state.optimize='width';render()});
 $('impSignal').addEventListener('change',()=>{state.signalId=$('impSignal').value;render()});
@@ -232,7 +260,7 @@ $('impSolveBtn').addEventListener('click',()=>{const solution=E.optimizeGeometry
 });
 $('impExportBtn').addEventListener('click',exportResult);
 $('viaAutoPitch').addEventListener('click',()=>{if(!lastVia?.ok)return;state.via.pitchMM=Number(lastVia.max20MM.toFixed(3));render()});
-$('viaExport').addEventListener('click',()=>{if(!lastVia?.ok)return;download({schema:'com.simonlation.via-fence',version:1,appVersion:'0.4.1-beta',layout:state.via,transmissionLine:{mode:state.mode,widthMM:state.widthMM,spacingMM:state.spacingMM},result:lastVia,stackup:project()},'simonlation-via-fence.json')});
+$('viaExport').addEventListener('click',()=>{if(!lastVia?.ok)return;download({schema:'com.simonlation.via-fence',version:1,appVersion:'0.4.2-beta',layout:state.via,transmissionLine:{mode:state.mode,widthMM:state.widthMM,spacingMM:state.spacingMM},result:lastVia,stackup:project()},'simonlation-via-fence.json')});
 document.querySelectorAll('[data-imp-view]').forEach(el=>el.addEventListener('click',()=>{state.view=el.dataset.impView;render()}));
  $('impShowVias').addEventListener('change',e=>{state.showCrossVias=e.target.checked;if(state.showCrossVias&&state.via.placement==='none')state.via.placement='both';render()});
  $('viaPlacement').addEventListener('change',()=>{state.via.placement=$('viaPlacement').value;if(state.via.placement==='none')state.showCrossVias=false;render()});

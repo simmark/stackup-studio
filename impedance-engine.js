@@ -1,7 +1,8 @@
-/* SIMONLATION · Impedance Quick Engine v0.2
+/* SIMONLATION · Impedance Quick Engine v0.4.2
  * Local, deterministic, quasi-static analytical estimates only.
  * Sources/methods: Hammerstad–Jensen (microstrip incl. finite t),
- * Cohn/Wadell (symmetric stripline), IPC-2141A style differential coupling.
+ * Wheeler (symmetric stripline incl. finite t), Cohn (coupled stripline even/odd),
+ * IPC-2141A style differential microstrip coupling.
  * Not a 2D field solver, loss solver, manufacturer stackup qualification or fullwave EM model.
  */
 (function(root){
@@ -56,21 +57,43 @@ function hammerstad(w,h,t,er){
  if(!finite(z0)||!finite(eff))return error('Unstable microstrip result.');
  return {ok:true,z0,epsEff:eff,method:'Hammerstad–Jensen, finite-thickness correction',quality:'analytical', warnings:tn>.2?['T/H > 0.2: finite thickness correction is near its practical limits.']:[]};
 }
+// Complete elliptic integral ratio K(k)/K(k') via Hilberg's approximation (rel. error < 1e-5).
+function ellipticRatio(k){
+ const kp=Math.sqrt(1-k*k);
+ if(k<=Math.SQRT1_2)return Math.PI/Math.log(2*(1+Math.sqrt(kp))/(1-Math.sqrt(kp)));
+ return Math.log(2*(1+Math.sqrt(k))/(1-Math.sqrt(k)))/Math.PI;
+}
+// Wheeler finite-thickness width correction for symmetric stripline (Wadell, Transmission Line Design Handbook, 3.5.1).
+function striplineEffectiveWidthRatio(w,b,t){
+ const x=t/b; if(x<1e-9)return w/b;
+ const m=2/(1+2*x/(3*(1-x)));
+ const dW=x/(Math.PI*(1-x))*(1-.5*Math.log(Math.pow(x/(2-x),2)+Math.pow(.0796*x/(w/b+1.1*x),m)));
+ return w/(b-t)+dW;
+}
 function stripline(w,hTop,hBottom,t,er){
  if(![w,hTop,hBottom,er].every(finite)||t<0)return error('Invalid stripline geometry.');
  const symmetry=Math.abs(hTop-hBottom)/((hTop+hBottom)/2);
  if(symmetry>.1)return error('Asymmetric stripline (unequal top/bottom distances). Requires a 2D solver; no symmetric model applied.');
- const b=hTop+hBottom+t, d=b-t;
- if(t/b>.25)return error('Copper thickness above Cohn model limit (T/B > 0.25).');
- const ratio=w/d;
- if(ratio<=.35)return error('Narrow stripline W/(B–T) ≤ 0.35. Cohn wide-strip model not applicable.');
- const m=2*b/d;
- const cf=b/(Math.PI*d)*(m*Math.log((m+1)/(m-1))-Math.log((m*m-1)/4));
- const z0=ETA/(4*Math.sqrt(er)*(w/d+cf/Math.PI));
+ const b=hTop+hBottom+t;
+ if(t/b>.25)return error('Copper thickness above model limit (T/B > 0.25).');
+ if(w/b<.05||w/b>10)return error('Out of stripline model range: 0.05 ≤ W/B ≤ 10.');
+ const wp=striplineEffectiveWidthRatio(w,b,t),q=8/(Math.PI*wp);
+ const z0=30/Math.sqrt(er)*Math.log(1+4/(Math.PI*wp)*(q+Math.sqrt(q*q+6.27)));
  if(!finite(z0))return error('Unstable stripline result.');
  const warnings=[];
- if(symmetry>.02)warnings.push('Small top/bottom offset: symmetric Cohn model is approximate.');
- return {ok:true,z0,epsEff:er,method:'Cohn / Wadell symmetric wide-strip model',quality:'analytical',warnings};
+ if(symmetry>.02)warnings.push('Small top/bottom offset: symmetric stripline model is approximate.');
+ return {ok:true,z0,epsEff:er,method:'Wheeler symmetric stripline incl. finite thickness',quality:'analytical',warnings};
+}
+// Edge-coupled symmetric stripline: Cohn exact zero-thickness even/odd solution,
+// scaled by the Wheeler single-line thickness ratio.
+function coupledStripline(w,s,hTop,hBottom,t,er){
+ const single=stripline(w,hTop,hBottom,t,er);if(!single.ok)return single;
+ const b=hTop+hBottom+t,a=Math.PI*w/(2*b),c=Math.PI*(w+s)/(2*b);
+ const ke=Math.tanh(a)*Math.tanh(c),ko=Math.tanh(a)/Math.tanh(c);
+ const z=k=>30*Math.PI/Math.sqrt(er)/ellipticRatio(k);
+ const thin=stripline(w,hTop,hBottom,1e-9,er);
+ const corr=single.z0/thin.z0;
+ return {ok:true,zEven:z(ke)*corr,zOdd:z(ko)*corr};
 }
 function calculate(input){
  const {stackup,signalId,mode='microstrip',widthMM,spacingMM=.15}=input;
@@ -105,13 +128,27 @@ function calculate(input){
   delayPsPerMM:1e9/C*Math.sqrt(calc.epsEff),wOverH:w/h};
  if(paired){
   // Empirical IPC-2141A coupling factor. It is NOT an eigenmode field computation.
-  const c=mode==='diff-microstrip'?0.48*Math.exp(-.96*s/h):.347*Math.exp(-2.9*s/h);
-  result.zOdd=calc.z0*(1-c);result.zEven=calc.z0*(1+c);
+  if(mode==='diff-stripline'){
+   const refs2=findRefs(stackup,signalId),ht=homogeneous(refs2.top.dielectrics).h,hb=homogeneous(refs2.bottom.dielectrics).h;
+   const cs=coupledStripline(w,s,ht,hb,t,er);if(!cs.ok)return cs;
+   result.zOdd=cs.zOdd;result.zEven=cs.zEven;
+  }else{
+   const c=0.48*Math.exp(-.96*s/h);
+   result.zOdd=calc.z0*(1-c);result.zEven=calc.z0*(1+c);
+  }
   result.zDiff=2*result.zOdd;result.zCommon=result.zEven/2;
-  result.method+=' + empirical IPC-style edge-coupling correction';
-  result.quality='empirical differential estimate';
+  if(mode==='diff-stripline'){
+   result.method='Cohn coupled stripline (exact even/odd for t→0) + Wheeler thickness scaling';
+   result.quality='analytical';
+   result.zEvenApproximate=false;
+  }else{
+   result.method+=' + empirical IPC-style edge-coupling correction';
+   result.quality='empirical differential estimate';
+   result.zEvenApproximate=true;
+   if(s/h<.5)warnings.push('Strong coupling (S/H < 0.5): empirical differential correction may be inaccurate.');
+   warnings.push('Zeven/Zcommon are mirrored from the empirical odd-mode factor and are rough indications only.');
+  }
   warnings.push('Delay is the uncoupled-line quasi-static estimate, not odd/even modal delay.');
-  if(s/h<.5)warnings.push('Strong coupling (S/H < 0.5): empirical differential correction may be inaccurate.');
  }
  if(t/w>.5)warnings.push('Copper T/W > 0.5: approximation is sensitive to sidewall/etch profile.');
  warnings.push('Copper roles do not prove continuous reference-plane coverage. Check actual layout.');
@@ -271,5 +308,5 @@ function toleranceAnalysis(input,limits){
  note:'Deterministic corners and one-at-a-time sensitivities; not statistical yield. All comparisons inherit model uncertainty.'};
 }
 
-root.SimonlationImpedance=Object.freeze({calculate,solveWidth,solveSpacing,optimizeGeometry,toleranceCorners,toleranceAnalysis,findRefs,hammerstad,stripline,VERSION:'0.4'});
+root.SimonlationImpedance=Object.freeze({calculate,solveWidth,solveSpacing,optimizeGeometry,toleranceCorners,toleranceAnalysis,findRefs,hammerstad,stripline,VERSION:'0.4.2'});
 })(typeof window!=='undefined'?window:globalThis);

@@ -5,12 +5,12 @@
 <meta name="theme-color" content="#0b121e" id="themeMeta"><meta name="application-name" content="SIMONLATION Stackup Studio">
 <meta name="description" content="Free, local-first PCB layer stackup designer. Design copper and dielectric layers, import KiCad stackups, and export projects for impedance workflows.">
 <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>Stackup Studio | SIMONLATION</title><link rel="stylesheet" href="./styles.css?v=0.4.1">
+<title>Stackup Studio | SIMONLATION</title><link rel="stylesheet" href="./styles.css?v=0.4.2">
 </head>
 <body>
 <div class="app" id="app">
 <header class="topbar">
-  <div class="brand"><div class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></div><div class="brand-word"><b>SIMON<span>LATION</span></b><small>STACKUP STUDIO</small></div><span class="beta-tag">BETA 0.4.1</span></div>
+  <div class="brand"><div class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></div><div class="brand-word"><b>SIMON<span>LATION</span></b><small>STACKUP STUDIO</small></div><span class="beta-tag">BETA 0.4.2</span></div>
   <nav class="top-actions" aria-label="Project actions">
     <button class="btn icon-btn" id="undoBtn" title="Undo · Ctrl+Z" aria-label="Undo">↶</button><button class="btn icon-btn" id="redoBtn" title="Redo · Ctrl+Shift+Z" aria-label="Redo">↷</button>
     <span class="sep"></span><button class="btn" id="openBtn" data-i18n="open">Open</button>
@@ -56,6 +56,7 @@
     <section class="imp-panel" id="impPanel" aria-label="PCB Impedance Lab">
       <div class="section-heading imp-title"><div><span class="eyebrow" data-imp-label="label">ANALYTICAL QUICK ESTIMATE</span><h2 data-imp-label="title">PCB Impedance Lab</h2></div><div class="imp-section-actions"><span class="imp-pill">QUASI-STATIC</span><button class="btn" id="impExportBtn" data-imp-label="export">Export result JSON</button></div></div>
       <p class="imp-intro" data-imp-label="info">The stackup supplies H, copper thickness and Dk; enter W and S here. No field simulation.</p>
+      <div class="imp-headline" id="impHeadline" aria-live="polite"></div>
       <div class="imp-workspace">
         <div class="imp-controls">
           <div class="imp-field"><label for="impSignal" data-imp-label="signal">Signal layer</label><select id="impSignal"></select></div>
@@ -133,7 +134,7 @@
   </main>
   <aside class="sidebar sidebar-right"><div class="pane-title"><span class="eyebrow" data-i18n="propertiesTag">CONTEXT INSPECTOR</span><h2 data-i18n="properties">Properties</h2></div><div class="pane-scroll" id="inspector"></div></aside>
 </div>
-<footer class="statusbar"><div><span class="status-dot"></span><span id="statusText" data-i18n="localReady">Local engine ready</span><span class="status-divider">│</span><span data-i18n="noCloud">No cloud connection required</span></div><div><span id="validationStatus">—</span><span class="status-divider">│</span><span data-i18n="version">v0.4.1 beta</span></div></footer>
+<footer class="statusbar"><div><span class="status-dot"></span><span id="statusText" data-i18n="localReady">Local engine ready</span><span class="status-divider">│</span><span data-i18n="noCloud">No cloud connection required</span></div><div><span id="validationStatus">—</span><span class="status-divider">│</span><span data-i18n="version">v0.4.2 beta</span></div></footer>
 </div>
 <input id="fileInput" type="file" hidden accept=".json,.kicad_pcb,.txt,application/json,text/plain">
 <dialog id="helpDialog"><div class="dialog-top"><h2 data-i18n="helpTitle">Stackup Studio · Help</h2><button id="closeHelp" class="btn">✕</button></div><div id="helpContent"></div></dialog>

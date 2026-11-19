@@ -19,25 +19,37 @@ Implementation includes the complete Hammerstad–Jensen a(u), b(εr) filling fa
 
 Sources: [Qucs: Single microstrip line](https://qucs.github.io/tech/node75.html), [scikit-rf microstrip numerical implementation](https://scikit-rf.readthedocs.io/en/v1.13.0/_modules/skrf/media/mline.html).
 
-## Symmetric stripline
+## Symmetric stripline (since 0.4.2)
 
-Uses Cohn / Wadell symmetric **wide-strip** expression with plane-to-plane spacing B=Htop+Hbottom+T. Preconditions:
+Uses Wheeler's symmetric stripline expression with finite-thickness width correction (Wadell, *Transmission Line Design Handbook*, §3.5.1), plane-to-plane spacing B = Htop + Hbottom + T:
 
-- A real interior copper conductor with the next copper layer above and below designated GND/PWR.
-- |Htop−Hbottom|/mean(Htop,Hbottom) ≤ 10%, with warning if >2%.
-- εr homogeneous on both sides and matching within 0.01 Dk.
-- W/(B−T) > 0.35 and T/B ≤ 0.25.
+- x = T/B, m = 2 / (1 + 2x / (3(1−x)))
+- ΔW/(B−T) = x / (π(1−x)) · [1 − ½ ln((x/(2−x))² + (0.0796x / (W/B + 1.1x))^m)]
+- W' = W/(B−T) + ΔW/(B−T)
+- Z0 = 30/√εr · ln{1 + 4/(πW') · [8/(πW') + √((8/(πW'))² + 6.27)]}
 
-Outside this range the calculator stops; it does not silently switch to an unvalidated narrow-strip interpolation. The interface describes the resulting scalar impedance as an analytic estimate. More complex offset/asymmetric cases belong in the future 2D solver.
+Preconditions: real interior conductor with GND/PWR copper directly above and below, |Htop−Hbottom|/mean ≤ 10 % (warning above 2 %), equal Dk on both sides, 0.05 ≤ W/B ≤ 10, T/B ≤ 0.25.
 
-Method reference: [Cohn/Wadell analytic overview](https://github.com/RFingAdam/lineforge/blob/main/docs/theory/analytical.md), [Polar stripline geometry explanation](https://www.polarinstruments.com/support/cits/AP123.html).
+**Correction note:** 0.4.1 and earlier used a Cohn wide-strip variant with a wrong fringing-capacitance term (`m = 2b/d`, extra division by π). It overestimated Z0 by roughly 24–39 % for common geometries and rejected W/(B−T) ≤ 0.35. Results for stripline from those versions should be recalculated.
 
-## Differential microstrip and differential stripline
+Validation: exact conformal-mapping solution for t→0 (Z0·√εr = 30π·K(k)/K(k′), k = sech(πW/2B)) within 1 %; independent 2D finite-difference Laplace solve within about 2 % for T = 18 µm.
+
+## Differential stripline (since 0.4.2)
+
+Cohn's exact zero-thickness even/odd solution for edge-coupled symmetric stripline:
+
+- ke = tanh(πW/2B)·tanh(π(W+S)/2B), ko = tanh(πW/2B)·coth(π(W+S)/2B)
+- Z(e,o)·√εr = 30π · K(k′)/K(k)
+- Thickness: both modes scaled by the Wheeler single-line ratio Z0(T)/Z0(T→0).
+- Zdiff = 2·Zodd, Zcommon = Zeven/2.
+
+Against the 2D finite-difference reference: +0.4 … +3.4 % in Zdiff for S/B between 0.19 and 0.72.
+
+## Differential microstrip
 
 Treat edge-coupled lines as an empirical correction applied to the calculated single-ended Z0:
 
 - Differential microstrip: `k = 0.48 · exp(−0.96·S/H)`.
-- Differential stripline: `k = 0.347 · exp(−2.9·S/B)`.
 - `Zodd = Z0·(1−k)`, `Zeven = Z0·(1+k)`.
 - `Zdiff = 2·Zodd`, `Zcommon = Zeven/2`.
 

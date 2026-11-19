@@ -1,6 +1,6 @@
-# SIMONLATION Stackup & Impedance Studio · 0.4.1 beta
+# SIMONLATION Stackup & Impedance Studio · 0.4.2 beta
 
-**Engineering preview · 18 November 2026 · © Simon Mark**
+**Engineering preview · 19 November 2026 · © Simon Mark**
 
 **App:** https://simmark.github.io/stackup-studio/  
 **Repository:** https://github.com/simmark/stackup-studio
@@ -16,6 +16,12 @@ Local-first, browser-installable PCB stackup editor with an integrated analytica
 5. Set ± W/H/T/S in percent or µm and Dk in percent. Inspect 16 or 32 deterministic corner extremes and the ranked sensitivity bars; these are **not statistical production distributions**.
 6. Configure GND via fences on either side of a single-ended or differential pair. Provide maximum relevant frequency, pad/drill/offset/pitch/length and limits. The tool shows λg/10 and λg/20 layout pitch rules, total vias, top and sectional views and nominal clearances. Export the estimate as JSON.
 
+## New in 0.4.2 — corrected stripline model
+
+- Symmetric stripline now uses Wheeler's formula with finite-thickness correction; the former expression overestimated Z0 by 24–39 %. Differential stripline uses Cohn's exact even/odd solution (thickness-scaled).
+- Checked against an independent 2D finite-difference field solve: all supported modes within about ±3.5 % for typical FR-4 geometries (see CHANGELOG).
+- Result headline directly under the Impedance Lab title; consistent German interface.
+
 ## New in 0.4.1 — visual workbench and via placement
 
 - **Clear desktop layout:** stackup cross-section and impedance workspace share a common top row and approximately matching panel heights; the stackup card now includes the active signal/reference-layer context rather than wasting its lower area. On smaller screens the sections stack vertically.
@@ -26,8 +32,8 @@ Local-first, browser-installable PCB stackup editor with an integrated analytica
 
 ## What is calculated, and what isn't
 
-- **Analytical:** Hammerstad–Jensen microstrip (including thickness correction) and restricted Cohn/Wadell symmetric wide-stripline.
-- **Empirical:** differential microstrip/stripline coupled impedance correction (not a full odd/even modal solver). For strong coupling, complex material stacks or tight via-to-line placement, results can be unreliable.
+- **Analytical:** Hammerstad–Jensen microstrip (including thickness correction), Wheeler symmetric stripline (including thickness correction) and Cohn coupled stripline (even/odd).
+- **Empirical:** differential microstrip coupled impedance correction (IPC-2141A style, not a full odd/even modal solver). For strong coupling, complex material stacks or tight via-to-line placement, results can be unreliable.
 - **Preview only:** GCPW, differential GCPW, embedded microstrip and asymmetric stripline — the app shows the geometry option but does **not** return invented impedance numbers for structures requiring a validated field solver.
 - **Via fence:** guided-wavelength pitch heuristics and geometric clearance/annular estimates, **no prediction of the fence's effect on Z0, radiation, isolation dB or crosstalk**. GND connectivity and actual copper shapes must be checked in the PCB layout.
 - **No frequency-dependent impedance/loss solver:** material frequency behavior, tanδ loss, copper loss/roughness, mask corrections, plating and etch shapes, transitions and manufacturing suitability are not simulated.
@@ -43,6 +49,7 @@ The HTML, CSS, JS and icons are bundled locally; no CDN, tracking, remote solver
 ```bash
 node tests/impedance_engine_test.js
 node tests/engineering_regression.js
+node tests/stripline_reference_test.js
 node tests/service_worker_v04.js
 python tests/browser_v04.py
 python tests/roundtrip_v04.py
@@ -65,4 +72,4 @@ The publicly hosted web app does **not** hide client-side source code. Keeping t
 
 ## v1.0 status
 
-This build is intentionally labeled **0.4.1 beta**, not 1.0. Before 1.0, independent field-model validation, manufacturer representative data, legal review and actual online-install/offline-restart testing are mandatory. See `docs/V1_READINESS.md`.
+This build is intentionally labeled **0.4.2 beta**, not 1.0. Before 1.0, independent field-model validation, manufacturer representative data, legal review and actual online-install/offline-restart testing are mandatory. See `docs/V1_READINESS.md`.

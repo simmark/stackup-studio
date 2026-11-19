@@ -1,5 +1,14 @@
 # SIMONLATION Stackup Studio · Changelog
 
+## 0.4.2-beta (2026-11-19)
+
+- **Fix · stripline impedance:** The previous Cohn wide-strip expression used a wrong fringing term and overestimated symmetric stripline Z0 by roughly 24–39 % (e.g. W=0.15 mm, b=0.418 mm, εr 4.2: 73.7 Ω instead of ≈53 Ω). Replaced by Wheeler's symmetric stripline formula with finite-thickness correction (valid 0.05 ≤ W/B ≤ 10), so typical narrow 100 Ω pairs are no longer rejected.
+- **Differential stripline:** now uses Cohn's exact even/odd solution for thin strips, scaled with the Wheeler thickness ratio, instead of the IPC exponential fit. Zeven is therefore a model value, not a mirrored estimate.
+- **Independent reference test:** `tests/stripline_reference_test.js` checks against the exact conformal-mapping solution (t→0, < 1 %) and an independent 2D finite-difference Laplace solve (± 3 %).
+- Validation against the 2D field solve (εr 4.2): microstrip −0.4 … +1.0 %, differential microstrip −1.2 … +2.7 %, stripline −2.1 … −1.7 %, differential stripline +0.4 … +3.4 %.
+- **UI:** result headline (Z₀ / Zdiff, target deviation, model class, solder-mask notice) directly under the Impedance Lab title, visible without scrolling. German UI now consistently German (view switch, optimizer options, all model warnings). Zeven for differential microstrip marked as approximate (≈).
+- Cache version `simonlation-stackup-v0.4.2`.
+
 ## 0.4.1-beta (2026-11-18)
 
 - Improved responsive desktop workbench: side-by-side Stackup / Impedance with similar card heights, selected signal/reference context and full-width engineering sections below.
