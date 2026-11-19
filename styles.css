@@ -241,3 +241,43 @@
 .imp-headline .imp-h-note{font-size:12px;color:var(--muted);flex-basis:100%}
 @media (max-width:550px){.imp-headline{margin:0 13px 12px}.imp-headline .imp-h-chips{margin-left:0}}
 #impTargetDelta{display:none}
+
+/* ===== 0.4.3 · layout & readability pass (authoritative overrides) ===== */
+/* Stack diagram is drawn in container pixels (app.js) – the box simply wraps it. */
+.diagram-area,.design-workbench .editor-panel .diagram-area,.design-workbench:not(.is-stacked) .editor-panel .diagram-area{height:auto!important;min-height:0!important;flex:none!important;display:block}
+.diagram-area svg{width:100%;display:block}
+.design-workbench:not(.is-stacked) .stack-route-context{flex:none;min-height:0}
+/* Readable minimum type sizes */
+.eyebrow{font-size:10px}
+.section-subline,.diagram-footer,.imp-canvas-tip,.imp-small,.small-hint{font-size:11px}
+.foot-right{font-size:10px}
+.metric>span{font-size:10px}
+th{font-size:10px}
+.nav-main b{font-size:12px}.nav-main small,.nav-thick{font-size:10.5px}
+.inspector-field label,.summary-item{font-size:11px}
+.validation-list li,.small-box p{font-size:11px}
+/* Impedance Lab: one result headline, no duplicate result card */
+#impPanel{container-type:inline-size}
+#impPanel #impResultCard{display:none}
+#impPanel .imp-workspace{display:grid;grid-template-columns:minmax(0,1fr);min-height:0}
+#impPanel .imp-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;align-items:end;padding:14px 16px;border-right:0}
+#impPanel .imp-controls>.imp-two,#impPanel .imp-controls>.imp-solve,#impPanel .imp-controls>.imp-small,#impPanel .imp-controls>.imp-target-result{grid-column:1/-1}
+#impPanel .imp-workarea{grid-column:1;border-top:1px solid var(--line)}
+#impPanel #impSvg{display:block;width:100%;height:auto;max-height:300px;min-height:0}
+#impPanel .imp-readouts{grid-column:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;padding:12px 16px;border-left:0;border-top:1px solid var(--line);align-items:start}
+#impPanel .imp-reading{margin:0;padding:6px 0;border:0;border-bottom:1px solid var(--line);min-width:0;min-height:0}
+#impPanel .imp-reading span{font-size:11px;color:var(--muted)}
+#impPanel .imp-reading strong{font-size:14px;font-weight:700}
+@container (min-width:760px){
+ #impPanel .imp-workspace{grid-template-columns:250px minmax(0,1fr);grid-template-rows:auto auto}
+ #impPanel .imp-controls{grid-column:1;grid-row:1/span 2;display:flex;flex-direction:column;align-items:stretch;gap:12px;border-right:1px solid var(--line)}
+ #impPanel .imp-workarea{grid-column:2;grid-row:1;border-top:0}
+ #impPanel .imp-readouts{grid-column:2;grid-row:2;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 18px;border-top:1px solid var(--line);border-left:0;padding:12px 18px}
+ #impPanel .imp-reading{border-bottom:0}
+}
+@container (min-width:520px) and (max-width:759px){#impPanel .imp-readouts{grid-template-columns:repeat(4,minmax(0,1fr))}}
+/* Via fence */
+.via-check-grid span{font-size:11.5px;padding:8px 9px}
+.via-check-grid small{font-size:10.5px}
+.via-check-grid .warn{color:var(--yellow);border-color:#8d744366}
+#viaSvg{width:100%;height:auto;display:block}

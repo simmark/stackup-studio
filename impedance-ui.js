@@ -14,8 +14,8 @@ const de=()=>document.documentElement.lang!=='en';
 const fmt=(n,d=2)=>Number(n).toLocaleString(de()?'de-DE':'en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const txt={
- de:{label:'SCHNELLE ANALYTISCHE BERECHNUNG',title:'PCB Impedance Lab',info:'Referenzlagen und Materialien aus dem Stackup. W und S kannst du auch direkt im Querschnitt auswählen. Die Rechnung ist kein Feldsolver.',signal:'Signallage',mode:'Leitungsgeometrie',width:'Breite W',spacing:'Abstand S',target:'Zielimpedanz',solve:'Optimieren',optimize:'Variable',export:'Ergebnis als JSON',noValue:'Nicht berechnet',outline:'Leitungsquerschnitt',model:'Rechenmodell',limits:'Modellgrenzen & Hinweise',tolerance:'FERTIGUNGSTOLERANZEN',toleranceNote:'Deterministische Grenzfälle, keine statistische Fertigungsausbeute.',lower:'Minimum',nominal:'Nominal',upper:'Maximum',reference:'Referenzlagen',height:'Dielektrikumsabstand',eps:'Effektives Dk',delay:'Laufzeit',unsupported:'Analytische Berechnung nicht verfügbar',sample:'Ungeprüfte Näherung · keine Fertigungsvorgabe',editTip:'Maße W / S / H anklicken, um die Eingabe zu bearbeiten · Ansicht schematisch oder maßstäblich',viaTitle:'Via Fence Designer',viaSubtitle:'GND-Vias links und rechts der Leitung · Pitch, Geometrie und Fertigungsabstände',viaHeuristic:'LAYOUT-RICHTWERT',viaFreq:'Maximale relevante Frequenz',viaPitch:'Pitch / Via-Abstand',viaPad:'Pad-Durchmesser',viaDrill:'Bohrung',viaEdge:'Leiterbahnkante → Pad',viaLength:'Zaunlänge',viaMinTrace:'Min. Trace-Abstand',viaRing:'Min. Restring',viaGapMin:'Min. Pad-zu-Pad',viaAuto:'λg/20 übernehmen',viaExport:'Via JSON exportieren',viaTopView:'Draufsicht · GND-Via-Reihen (schematisch)',viaPreview:'Vias zeigen',viaPlacementLabel:'Via-Anordnung',viaPlacementHint:'Auswahl gilt für Zählung und Vorschau; die Impedanz wird nicht korrigiert.',viaOff:'Keine Vias',viaOnlyLeft:'Nur links',viaOnlyRight:'Nur rechts',viaBoth:'Beidseitig',viaDisabled:'Via Fence ist ausgeschaltet. Eine Via-Anordnung auswählen, um Pitch und Abstände zu prüfen.',manufacturing:'FERTIGUNGSANALYSE',toleranceTitle:'Toleranzen & Modellgrenzen'},
- en:{label:'QUICK ANALYTICAL ESTIMATE',title:'PCB Impedance Lab',info:'Reference planes and dielectrics come from stackup. Click W and S right in the cross-section. This is not a field solver.',signal:'Signal layer',mode:'Trace geometry',width:'Width W',spacing:'Gap S',target:'Target impedance',solve:'Optimize',optimize:'Variable',export:'Export result JSON',noValue:'Not calculated',outline:'Trace cross-section',model:'Calculation model',limits:'Model limitations & notes',tolerance:'MANUFACTURING TOLERANCES',toleranceNote:'Deterministic corners, not statistical yield.',lower:'Minimum',nominal:'Nominal',upper:'Maximum',reference:'Reference planes',height:'Dielectric separation',eps:'Effective Dk',delay:'Propagation delay',unsupported:'Analytical calculation unavailable',sample:'Unverified estimate · not a fabrication specification',editTip:'Click W / S / H labels to edit · schematic or true-ratio view',viaTitle:'Via Fence Designer',viaSubtitle:'Ground stitching left and right of traces · pitch, geometry and fabrication checks',viaHeuristic:'LAYOUT GUIDELINE',viaFreq:'Maximum relevant frequency',viaPitch:'Via pitch',viaPad:'Pad diameter',viaDrill:'Drill diameter',viaEdge:'Trace edge → via pad',viaLength:'Fence length',viaMinTrace:'Min trace clearance',viaRing:'Min annular ring',viaGapMin:'Min pad-to-pad',viaAuto:'Apply λg/20',viaExport:'Export via JSON',viaTopView:'Top view · GND via rows (schematic)',viaPreview:'Show vias',viaPlacementLabel:'Via placement',viaPlacementHint:'Selection controls via counts and drawing; no impedance correction is applied.',viaOff:'No vias',viaOnlyLeft:'Left only',viaOnlyRight:'Right only',viaBoth:'Both sides',viaDisabled:'Via fence is disabled. Select a placement to evaluate pitch and clearances.',manufacturing:'MANUFACTURING ANALYSIS',toleranceTitle:'Tolerances & model limits'}};
+ de:{label:'SCHNELLE ANALYTISCHE BERECHNUNG',title:'PCB Impedance Lab',info:'Referenzlagen und Materialien aus dem Stackup. W und S kannst du auch direkt im Querschnitt auswählen. Die Rechnung ist kein Feldsolver.',signal:'Signallage',mode:'Leitungsgeometrie',width:'Breite W',spacing:'Abstand S',target:'Zielimpedanz',solve:'Optimieren',optimize:'Anpassen',export:'Ergebnis als JSON',noValue:'Nicht berechnet',outline:'Leitungsquerschnitt',model:'Rechenmodell',limits:'Modellgrenzen & Hinweise',tolerance:'FERTIGUNGSTOLERANZEN',toleranceNote:'Deterministische Grenzfälle, keine statistische Fertigungsausbeute.',lower:'Minimum',nominal:'Nominal',upper:'Maximum',reference:'Referenzlagen',height:'Dielektrikumsabstand',eps:'Effektives Dk',delay:'Laufzeit',unsupported:'Analytische Berechnung nicht verfügbar',sample:'Ungeprüfte Näherung · keine Fertigungsvorgabe',editTip:'Maße W / S / H anklicken, um die Eingabe zu bearbeiten · Ansicht schematisch oder maßstäblich',viaTitle:'Via Fence Designer',viaSubtitle:'GND-Vias links und rechts der Leitung · Pitch, Geometrie und Fertigungsabstände',viaHeuristic:'LAYOUT-RICHTWERT',viaFreq:'Maximale relevante Frequenz',viaPitch:'Pitch / Via-Abstand',viaPad:'Pad-Durchmesser',viaDrill:'Bohrung',viaEdge:'Leiterbahnkante → Pad',viaLength:'Zaunlänge',viaMinTrace:'Min. Trace-Abstand',viaRing:'Min. Restring',viaGapMin:'Min. Pad-zu-Pad',viaAuto:'λg/20 übernehmen',viaExport:'Via JSON exportieren',viaTopView:'Draufsicht · GND-Via-Reihen',viaPreview:'Vias zeigen',viaPlacementLabel:'Via-Anordnung',viaPlacementHint:'Auswahl gilt für Zählung und Vorschau; die Impedanz wird nicht korrigiert.',viaOff:'Keine Vias',viaOnlyLeft:'Nur links',viaOnlyRight:'Nur rechts',viaBoth:'Beidseitig',viaDisabled:'Via Fence ist ausgeschaltet. Eine Via-Anordnung auswählen, um Pitch und Abstände zu prüfen.',manufacturing:'FERTIGUNGSANALYSE',toleranceTitle:'Toleranzen & Modellgrenzen'},
+ en:{label:'QUICK ANALYTICAL ESTIMATE',title:'PCB Impedance Lab',info:'Reference planes and dielectrics come from stackup. Click W and S right in the cross-section. This is not a field solver.',signal:'Signal layer',mode:'Trace geometry',width:'Width W',spacing:'Gap S',target:'Target impedance',solve:'Optimize',optimize:'Adjust',export:'Export result JSON',noValue:'Not calculated',outline:'Trace cross-section',model:'Calculation model',limits:'Model limitations & notes',tolerance:'MANUFACTURING TOLERANCES',toleranceNote:'Deterministic corners, not statistical yield.',lower:'Minimum',nominal:'Nominal',upper:'Maximum',reference:'Reference planes',height:'Dielectric separation',eps:'Effective Dk',delay:'Propagation delay',unsupported:'Analytical calculation unavailable',sample:'Unverified estimate · not a fabrication specification',editTip:'Click W / S / H labels to edit · schematic or true-ratio view',viaTitle:'Via Fence Designer',viaSubtitle:'Ground stitching left and right of traces · pitch, geometry and fabrication checks',viaHeuristic:'LAYOUT GUIDELINE',viaFreq:'Maximum relevant frequency',viaPitch:'Via pitch',viaPad:'Pad diameter',viaDrill:'Drill diameter',viaEdge:'Trace edge → via pad',viaLength:'Fence length',viaMinTrace:'Min trace clearance',viaRing:'Min annular ring',viaGapMin:'Min pad-to-pad',viaAuto:'Apply λg/20',viaExport:'Export via JSON',viaTopView:'Top view · GND via rows',viaPreview:'Show vias',viaPlacementLabel:'Via placement',viaPlacementHint:'Selection controls via counts and drawing; no impedance correction is applied.',viaOff:'No vias',viaOnlyLeft:'Left only',viaOnlyRight:'Right only',viaBoth:'Both sides',viaDisabled:'Via fence is disabled. Select a placement to evaluate pitch and clearances.',manufacturing:'MANUFACTURING ANALYSIS',toleranceTitle:'Tolerances & model limits'}};
 const t=k=>(de()?txt.de:txt.en)[k];
 const project=()=>window.SimonlationStackup.getSnapshot();
 const input=()=>({stackup:project(),signalId:state.signalId,mode:state.mode,widthMM:state.widthMM,spacingMM:state.spacingMM});
@@ -131,32 +131,45 @@ function drawCross(result){
  out+=`<text x="38" y="297" font-size="10" fill="${muted}">${showVia?(de()?'GND-Vias verkleinert dargestellt · Details im Via Fence':'GND vias reduced for clarity · see Via Fence'):(isStrip?(de()?'Referenzflächen ober- und unterhalb':'Reference planes above and below'):(de()?'Signalleitung und Referenzfläche':'Signal trace and reference plane'))}</text>`;
  svg.innerHTML=out;
 }
+// Top view of the fence: trace runs horizontally, drawn to true scale (X = Y) as a cut-out, with dimensions.
 function drawVia(v){
  const svg=$('viaSvg');if(!svg)return;
- const dk=document.documentElement.dataset.theme==='dark',ink=dk?'#e2eff5':'#34546b',grid=dk?'#2b4453':'#d4e4ea';
- const placement=state.via.placement;
- let out=`<rect width="620" height="230" rx="8" fill="${dk?'#101f2c':'#edf5f8'}"/><defs><pattern id="viaGrid" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M25 0H0V25" fill="none" stroke="${grid}" stroke-width=".7"/></pattern></defs><rect width="620" height="230" fill="url(#viaGrid)"/>`;
- const tw=paired()?15:22,gap=paired()?17:0,x1=310-(paired()?tw+gap/2:tw/2),leftX=x1-70,rightX=(paired()?310+gap/2+tw:310+tw/2)+70;
- out+=`<rect x="${x1}" y="24" width="${tw}" height="172" rx="3" fill="#dba365"/>`;
- if(paired())out+=`<rect x="${310+gap/2}" y="24" width="${tw}" height="172" rx="3" fill="#dba365"/>`;
- if(!v?.ok){
-  out+=`<text x="310" y="116" text-anchor="middle" fill="${ink}" font-size="13">${de()?'Via Fence ausgeschaltet':'Via fence disabled'}</text>`;
-  svg.innerHTML=out;return;
+ const W=620,H=260,dk=document.documentElement.dataset.theme==='dark',ink=dk?'#dbe9f1':'#2f4f63',muted=dk?'#8fa9b9':'#5f7888',grid=dk?'#22394a':'#d4e4ea',accent=dk?'#52dcd5':'#0b7f82';
+ svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ let out=`<rect width="${W}" height="${H}" rx="8" fill="${dk?'#0f1d2a':'#eef5f8'}"/><defs><pattern id="viaGrid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="${grid}" stroke-width=".6"/></pattern><marker id="vArr" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="${ink}"/></marker><marker id="vArrA" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="${accent}"/></marker></defs><rect width="${W}" height="${H}" fill="url(#viaGrid)"/>`;
+ const placement=state.via.placement,w=state.widthMM,sp=paired()?state.spacingMM:0,span=paired()?2*w+sp:w;
+ if(!v?.ok){out+=`<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="${ink}" font-size="13">${de()?'Via Fence ausgeschaltet':'Via fence disabled'}</text>`;svg.innerHTML=out;return;}
+ const pad=v.padMM,drill=v.drillMM,edge=v.edgeClearanceMM,pitch=v.actualPitchMM;
+ const sides=placement==='both'?['t','b']:placement==='left'?['t']:['b'];
+ const halfT=span/2+edge+pad;                                   // mm from trace centre to outer pad edge
+ const usableW=W-190,usableH=H-96;
+ const scT=usableH/(2*halfT);
+ const shown=Math.max(4,Math.min(12,Math.floor(usableW/(pitch*scT))+1));
+ const lenMM=(shown-1)*pitch+pad;
+ const sc=Math.min(scT,usableW/lenMM);                           // px per mm, identical in X and Y
+ const cy=(H-30)/2+4,Y=mm=>cy+mm*sc,x0=40+pad*sc/2+(usableW-lenMM*sc)/2;
+ const traceL=24,traceR=W-150;
+ const traces=paired()?[[-span/2,-span/2+w],[span/2-w,span/2]]:[[-w/2,w/2]];
+ for(const [a,b] of traces)out+=`<rect x="${traceL}" y="${Y(a).toFixed(1)}" width="${traceR-traceL}" height="${Math.max(1.5,(b-a)*sc).toFixed(1)}" rx="2" fill="#dba365"/>`;
+ const rowY={t:-(span/2+edge+pad/2),b:span/2+edge+pad/2};
+ for(const side of sides){const y=Y(rowY[side]);
+  out+=`<rect x="${traceL}" y="${(y-pad*sc/2-3).toFixed(1)}" width="${traceR-traceL}" height="${(pad*sc+6).toFixed(1)}" fill="#4c9a89" opacity=".16" rx="3"/>`;
+  for(let i=0;i<shown;i++){const x=x0+i*pitch*sc;out+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(pad*sc/2).toFixed(1)}" fill="#d5a064" stroke="#f0cd91" stroke-width="1"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(drill*sc/2).toFixed(1)}" fill="${dk?'#0f1d2a':'#eef5f8'}"/>`;}
  }
- const n=Math.max(2,Math.min(36,v.viasPerRow));
- const viaRadius=Math.min(9,Math.max(2.2,169/Math.max(1,n-1)*.38));
- const positions=[];
- if(['left','both'].includes(placement))positions.push(leftX);
- if(['right','both'].includes(placement))positions.push(rightX);
- for(const x of positions){
-  out+=`<path d="M${x} 23V198" stroke="#4c9a89" stroke-width="8" opacity=".25"/>`;
-  for(let i=0;i<n;i++){const y=27+i*169/(n-1);out+=`<circle cx="${x}" cy="${y}" r="${viaRadius}" fill="#d5a064" stroke="#f0cd91" stroke-width="${viaRadius>4?1.3:.6}"/><circle cx="${x}" cy="${y}" r="${viaRadius*.44}" fill="${dk?'#122531':'#edf5f8'}"/>`;}
- }
- const pitchX=positions.at(-1)+18;
- out+=`<path d="M${pitchX} 27V${27+169/(n-1)}" stroke="${ink}" stroke-width="1.5"/><text x="${pitchX+7}" y="45" font-size="12" fill="${ink}">P</text>`;
- out+=`<text x="310" y="218" font-size="11" fill="${ink}" text-anchor="middle">${de()?'Zaunlänge':'Fence length'} ${fmt(state.via.lengthMM,1)} mm · ${v.totalVias} Vias${v.viasPerRow>n?(de()?' (Ausschnitt schematisch)':' (schematic sample)'):''}</text>`;
+ // pitch dimension outside the first row
+ const s0=sides[0],ry=Y(rowY[s0]),dir=s0==='t'?-1:1,dimY=ry+dir*(pad*sc/2+18),xa=x0,xb=x0+pitch*sc;
+ out+=`<path d="M${xa} ${ry}V${dimY+dir*4}M${xb} ${ry}V${dimY+dir*4}" stroke="${muted}" stroke-width=".8" stroke-dasharray="2 2"/><path d="M${xa} ${dimY}H${xb}" stroke="${ink}" stroke-width="1.2" marker-start="url(#vArr)" marker-end="url(#vArr)"/><text x="${(xa+xb)/2}" y="${dimY+(dir<0?-7:15)}" text-anchor="middle" font-size="12" font-weight="700" fill="${ink}">P = ${fmt(pitch,2)} mm</text>`;
+ // clearance dimension (trace edge → pad edge) at the right end
+ const sE=sides.at(-1),edgeTrace=sE==='b'?span/2:-span/2,edgePad=sE==='b'?span/2+edge:-(span/2+edge),dx=traceR+16;
+ out+=`<path d="M${traceR} ${Y(edgeTrace)}H${dx+5}M${traceR} ${Y(edgePad)}H${dx+5}" stroke="${muted}" stroke-width=".8" stroke-dasharray="2 2"/><path d="M${dx} ${Y(edgeTrace)}V${Y(edgePad)}" stroke="${accent}" stroke-width="1.2" marker-start="url(#vArrA)" marker-end="url(#vArrA)"/><text x="${dx+10}" y="${(Y(edgeTrace)+Y(edgePad))/2+4}" font-size="11.5" font-weight="700" fill="${accent}">${fmt(edge,2)} mm</text>`;
+ out+=`<text x="${dx+10}" y="${(Y(edgeTrace)+Y(edgePad))/2+19}" font-size="10.5" fill="${muted}">${de()?'Kante → Pad':'edge → pad'}</text>`;
+ out+=`<text x="${W-14}" y="${Y(rowY[sides[0]])+4}" text-anchor="end" font-size="11" fill="${muted}">Ø ${fmt(pad,2)} / ${fmt(drill,2)} mm</text>`;
+ out+=`<text x="14" y="${H-12}" font-size="11" fill="${muted}">${de()?'Ausschnitt, maßstäblich (X = Y)':'Cut-out, true scale (X = Y)'}</text><text x="${W-14}" y="${H-12}" text-anchor="end" font-size="11" fill="${ink}">${de()?'Zaun':'Fence'} ${fmt(state.via.lengthMM,1)} mm · ${v.totalVias} Vias</text>`;
  svg.innerHTML=out;
 }
+const VIA_CHECKS={de:{'annular ring':'Restring','edge clearance':'Abstand Leiterbahn – Pad','via pad separation':'Abstand Pad – Pad','λg/10 pitch':'Pitch ≤ λg/10','λg/20 conservative':'Pitch ≤ λg/20 (konservativ)'},en:{'annular ring':'Annular ring','edge clearance':'Trace-to-pad clearance','via pad separation':'Pad-to-pad gap','λg/10 pitch':'Pitch ≤ λg/10','λg/20 conservative':'Pitch ≤ λg/20 (conservative)'}};
+function viaCheck(c){const name=VIA_CHECKS[de()?'de':'en'][c.name]||c.name;const detail=String(c.detail).replace(/(\d+\.\d+)/g,m=>fmt(Number(m),3)).replace(' vs min ',de()?' · Soll ≥ ':' · min ').replace(' vs max ',de()?' · Soll ≤ ':' · max ');
+ const soft=!c.pass&&c.name.startsWith('λg/20');return `<span class="${c.pass?'pass':soft?'warn':'fail'}">${c.pass?'✓':soft?'△':'!'} ${safe(name)} <small>${safe(detail)}</small></span>`;}
 function viaRender(r){
  const rows=state.via.placement==='both'?2:1;
  if(state.via.placement==='none'){
@@ -169,11 +182,12 @@ function viaRender(r){
  lastVia=V.calculate({...state.via,epsilonEff:effective,rows});drawVia(lastVia);
  $('viaAutoPitch').disabled=!lastVia.ok;$('viaExport').disabled=!lastVia.ok;
  if(lastVia.ok){
-  const html=[['Dk substrate',fmt(effective,2)],['λg',fmt(lastVia.guidedWavelengthMM,2)+' mm'],['λg/10',fmt(lastVia.max10MM,2)+' mm'],['λg/20',fmt(lastVia.max20MM,2)+' mm'],[de()?'Effektiver Pitch':'Actual pitch',fmt(lastVia.actualPitchMM,2)+' mm'],[de()?'Vias gesamt':'Total vias',String(lastVia.totalVias)]];
+  const html=[[de()?'Dk Substrat':'Substrate Dk',fmt(effective,2)],['λg',fmt(lastVia.guidedWavelengthMM,2)+' mm'],['λg/10',fmt(lastVia.max10MM,2)+' mm'],['λg/20',fmt(lastVia.max20MM,2)+' mm'],[de()?'Effektiver Pitch':'Actual pitch',fmt(lastVia.actualPitchMM,2)+' mm'],[de()?'Vias gesamt':'Total vias',String(lastVia.totalVias)]];
   $('viaResults').innerHTML=html.map(([a,b])=>`<div><small>${safe(a)}</small><strong>${safe(b)}</strong></div>`).join('');
-  $('viaWarnings').innerHTML=`<p>${safe(de()?'Pitch mit größtem benachbartem Substrat-Dk ('+fmt(effective,2)+') berechnet, nicht mit εeff der Leitung.':'Pitch uses largest adjacent substrate Dk ('+fmt(effective,2)+'), not trace εeff.')}</p><div class="via-check-grid">${lastVia.checks.map(c=>`<span class="${c.pass?'pass':'fail'}">${c.pass?'✓':'!'} ${safe(c.name)} <small>${safe(c.detail)}</small></span>`).join('')}</div><p>${safe(de()?'Keine Impedanzkorrektur durch Vias oder Masseflächen. Geometrieprüfung und Pitch-Richtwert.':'No impedance correction for vias or nearby ground. Geometric checks and pitch guideline only.')}</p>`;
+  $('viaWarnings').innerHTML=`<p>${safe(de()?'Pitch mit größtem benachbartem Substrat-Dk ('+fmt(effective,2)+') berechnet, nicht mit εeff der Leitung.':'Pitch uses largest adjacent substrate Dk ('+fmt(effective,2)+'), not trace εeff.')}</p><div class="via-check-grid">${lastVia.checks.map(viaCheck).join('')}</div><p>${safe(de()?'Keine Impedanzkorrektur durch Vias oder Masseflächen. Geometrieprüfung und Pitch-Richtwert.':'No impedance correction for vias or nearby ground. Geometric checks and pitch guideline only.')}</p>`;
  }else{$('viaResults').innerHTML='';$('viaWarnings').textContent=localError(lastVia.error);}
 }
+function methodLabel(m){if(!de())return m;return String(m).replace('Hammerstad–Jensen, finite-thickness correction','Hammerstad–Jensen mit Dickenkorrektur').replace(' + empirical IPC-style edge-coupling correction',' + empirische Kopplungskorrektur (IPC-2141A)').replace('Wheeler symmetric stripline incl. finite thickness','Wheeler, symmetrische Stripline mit Dickenkorrektur').replace('Cohn coupled stripline (exact even/odd for t→0) + Wheeler thickness scaling','Cohn, gekoppelte Stripline (exakt für t→0) + Wheeler-Dickenkorrektur');}
 function renderHeadline(r,diff){const box=$('impHeadline');if(!box)return;
  if(!r.ok){box.className='imp-headline invalid';box.innerHTML=`<span class="imp-h-kind">${diff?'Zdiff':'Z₀'}</span><strong>—</strong><span class="imp-h-note">${safe(localError(r.error))}</span>`;return;}
  const actual=r.zDiff??r.z0,delta=actual-state.target,ok=Math.abs(delta)<.5,pct=100*delta/state.target;
@@ -183,9 +197,11 @@ function renderHeadline(r,diff){const box=$('impHeadline');if(!box)return;
  box.className='imp-headline '+(ok?'good':'warn');
  box.innerHTML=`<span class="imp-h-kind">${diff?'Zdiff':'Z₀'}</span><strong>${fmt(actual,1)} Ω</strong><span class="imp-h-target">${de()?'Ziel':'Target'} ${fmt(state.target,0)} Ω · ${delta>=0?'+':''}${fmt(pct,1)} %</span><span class="imp-h-chips">${chips.map(c=>`<i>${safe(c)}</i>`).join('')}</span>`;}
 function render(){const signalLayers=syncLayer();
+ {const j=document.querySelector('[data-imp-jump="imp"]');if(j)j.textContent=de()?'Impedanz':'Impedance';}
+ {const L=de()?{svg:'SVG · Querschnitt',png:'PNG · Querschnitt',csv:'CSV · Lagentabelle',csvde:'CSV · Deutsch (Excel)',bridge:'JSON · Impedanz-Übergabe'}:{svg:'SVG · Cross-section',png:'PNG · Cross-section',csv:'CSV · Layer table',csvde:'CSV · German (Excel)',bridge:'JSON · Impedance handoff'};document.querySelectorAll('#exportMenu [data-export]').forEach(b=>{if(L[b.dataset.export])b.textContent=L[b.dataset.export];});}
  document.querySelectorAll('[data-imp-label]').forEach(el=>el.textContent=t(el.dataset.impLabel));
  $('impMode').innerHTML=Object.entries(modeNames()).map(([k,n])=>`<option value="${safe(k)}" ${k===state.mode?'selected':''}>${safe(n)}</option>`).join('');
- $('impSignal').innerHTML=signalLayers.map(l=>`<option value="${safe(l.id)}" ${l.id===state.signalId?'selected':''}>${safe(l.name)} · ${safe(l.role)}</option>`).join('');
+ $('impSignal').innerHTML=signalLayers.map(l=>`<option value="${safe(l.id)}" ${l.id===state.signalId?'selected':''}>${safe(l.name)} · ${safe(({signal:'Signal',ground:'GND',power:de()?'Versorgung':'Power',mixed:'Mixed'})[l.role]||l.role)}</option>`).join('');
  setValue('impWidth',state.widthMM);setValue('impGap',state.spacingMM);setValue('impTarget',state.target);
  const diff=paired();$('impGapField').classList.toggle('imp-muted',!diff);$('impGap').disabled=!diff;
  const opts=$('impOptimize');opts.value=state.optimize;if(!diff&&state.optimize!=='width')state.optimize='width';opts.value=state.optimize;
@@ -198,7 +214,7 @@ function render(){const signalLayers=syncLayer();
  $('impShowVias').title=state.view==='metric'?(de()?'Vias nur in der schematischen Ansicht':'Vias only available in schematic view'):(strip()?(de()?'Bei Stripline nur in der Draufsicht':'For stripline vias are shown in top view only'):'');
  const viewLabels=de()?{schematic:'Schematisch',metric:'Maßstab 1:1'}:{schematic:'Schematic',metric:'True scale'};
  document.querySelectorAll('[data-imp-view]').forEach(el=>{el.textContent=viewLabels[el.dataset.impView]||el.textContent;});
- const optLabels=de()?{width:'W anpassen · S fest',spacing:'S anpassen · W fest',balanced:'W und S'}:{width:'Solve W · keep S',spacing:'Solve S · keep W',balanced:'W and S'};
+ const optLabels=de()?{width:'Breite W',spacing:'Abstand S',balanced:'W und S'}:{width:'Width W',spacing:'Gap S',balanced:'W and S'};
  for(const o of $('impOptimize').options)o.textContent=optLabels[o.value]||o.textContent;
  document.querySelectorAll('[data-imp-view]').forEach(el=>{el.classList.toggle('active',el.dataset.impView===state.view);el.setAttribute('aria-pressed',String(el.dataset.impView===state.view));});
  for(const k of ['w','h','t','s','er']){setValue('impTol'+k.toUpperCase(),state.tolerances[k]);if(k!=='er')$('impUnit'+k.toUpperCase()).value=state.toleranceUnits[k];}
@@ -210,7 +226,7 @@ function render(){const signalLayers=syncLayer();
  setText('impSubResult',r.ok?(diff?`Zodd ${fmt(r.zOdd,2)} Ω · Zeven ${r.zEvenApproximate?'≈ ':''}${fmt(r.zEven,2)} Ω`:`εeff ${fmt(r.epsEff,3)}`):t('noValue'));
  renderHeadline(r,diff);
  setText('impEps',r.ok?fmt(r.epsEff,3):'—');setText('impDelay',r.ok?fmt(r.delayPsPerMM,2)+' ps/mm':'—');
- setText('impHeight',r.ok?fmt(r.referenceHeightMM,3)+' mm':'—');setText('impReference',r.ok?r.referenceNames.join(' + '):'—');setText('impMethod',r.ok?r.method:'—');
+ setText('impHeight',r.ok?fmt(r.referenceHeightMM,3)+' mm':'—');setText('impReference',r.ok?r.referenceNames.join(' + '):'—');setText('impMethod',r.ok?methodLabel(r.method):'—');
  // Visible routing reference underneath the stackup cross-section (not an additional solver).
  const selectedCopper=project().layers.find(l=>l.id===state.signalId);
  const routeData=$('stackContextData');

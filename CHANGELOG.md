@@ -1,5 +1,13 @@
 # SIMONLATION Stackup Studio · Changelog
 
+## 0.4.3-beta (2026-11-19)
+
+- **Readable stackup cross-section:** the layer diagram is now drawn in the pixel size of its container instead of a fixed 880 × 430 graphic that was scaled down to 5–6 px text in the side-by-side layout. Labels stay 11–12 px on desktop and phone; thin layers get enough height so names no longer overlap. Image export (SVG/PNG) uses its own fixed 1100 px layout.
+- **Default layout "stacked":** full-width stackup on top, Impedance Lab below (as in the earlier 0.2 preview). Side by side remains selectable; an older stored side-by-side preference is reset once.
+- **Impedance Lab:** inputs on the left, trace cross-section and model readouts on the right; the duplicate result card is removed (the headline shows Z₀ / Zdiff). Larger readout text, German model names, shorter optimiser labels.
+- **Via fence top view:** drawn to true scale (X = Y) as a cut-out along the trace with dimensioned pitch, trace-to-pad clearance and pad/drill; check names in German, λg/20 shown as a guideline warning instead of an error.
+- German labels for layer types, roles, export menu and quick navigation; minimum UI text size raised to 10–11 px.
+
 ## 0.4.2-beta (2026-11-19)
 
 - **Fix · stripline impedance:** The previous Cohn wide-strip expression used a wrong fringing term and overestimated symmetric stripline Z0 by roughly 24–39 % (e.g. W=0.15 mm, b=0.418 mm, εr 4.2: 73.7 Ω instead of ≈53 Ω). Replaced by Wheeler's symmetric stripline formula with finite-thickness correction (valid 0.05 ≤ W/B ≤ 10), so typical narrow 100 Ω pairs are no longer rejected.

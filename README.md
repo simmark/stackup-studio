@@ -1,4 +1,4 @@
-# SIMONLATION Stackup & Impedance Studio · 0.4.2 beta
+# SIMONLATION Stackup & Impedance Studio · 0.4.3 beta
 
 **Engineering preview · 19 November 2026 · © Simon Mark**
 
@@ -15,6 +15,10 @@ Local-first, browser-installable PCB stackup editor with an integrated analytica
 4. Choose **Solve W (S fixed)**, **Solve S (W fixed)**, or **W+S minimum-change geometry**. With a single Zdiff target infinitely many geometries can meet the target; the "both" mode selects the closest candidate in relative logarithmic parameter space to the user's initial values.
 5. Set ± W/H/T/S in percent or µm and Dk in percent. Inspect 16 or 32 deterministic corner extremes and the ranked sensitivity bars; these are **not statistical production distributions**.
 6. Configure GND via fences on either side of a single-ended or differential pair. Provide maximum relevant frequency, pad/drill/offset/pitch/length and limits. The tool shows λg/10 and λg/20 layout pitch rules, total vias, top and sectional views and nominal clearances. Export the estimate as JSON.
+
+## New in 0.4.3 — readable layout
+
+- Stackup cross-section drawn at container resolution (readable labels at every width), stacked layout as default, Impedance Lab with inputs left and cross-section/readouts right, via fence top view to true scale with dimensions. See CHANGELOG.
 
 ## New in 0.4.2 — corrected stripline model
 
@@ -72,4 +76,4 @@ The publicly hosted web app does **not** hide client-side source code. Keeping t
 
 ## v1.0 status
 
-This build is intentionally labeled **0.4.2 beta**, not 1.0. Before 1.0, independent field-model validation, manufacturer representative data, legal review and actual online-install/offline-restart testing are mandatory. See `docs/V1_READINESS.md`.
+This build is intentionally labeled **0.4.3 beta**, not 1.0. Before 1.0, independent field-model validation, manufacturer representative data, legal review and actual online-install/offline-restart testing are mandatory. See `docs/V1_READINESS.md`.

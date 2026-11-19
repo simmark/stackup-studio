@@ -5,12 +5,12 @@
 <meta name="theme-color" content="#0b121e" id="themeMeta"><meta name="application-name" content="SIMONLATION Stackup Studio">
 <meta name="description" content="Free, local-first PCB layer stackup designer. Design copper and dielectric layers, import KiCad stackups, and export projects for impedance workflows.">
 <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>Stackup Studio | SIMONLATION</title><link rel="stylesheet" href="./styles.css?v=0.4.2">
+<title>Stackup Studio | SIMONLATION</title><link rel="stylesheet" href="./styles.css?v=0.4.3">
 </head>
 <body>
 <div class="app" id="app">
 <header class="topbar">
-  <div class="brand"><div class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></div><div class="brand-word"><b>SIMON<span>LATION</span></b><small>STACKUP STUDIO</small></div><span class="beta-tag">BETA 0.4.2</span></div>
+  <div class="brand"><div class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></div><div class="brand-word"><b>SIMON<span>LATION</span></b><small>STACKUP STUDIO</small></div><span class="beta-tag">BETA 0.4.3</span></div>
   <nav class="top-actions" aria-label="Project actions">
     <button class="btn icon-btn" id="undoBtn" title="Undo · Ctrl+Z" aria-label="Undo">↶</button><button class="btn icon-btn" id="redoBtn" title="Redo · Ctrl+Shift+Z" aria-label="Redo">↷</button>
     <span class="sep"></span><button class="btn" id="openBtn" data-i18n="open">Open</button>
@@ -40,7 +40,7 @@
   <main class="main">
     <div class="main-heading"><div><span class="eyebrow" data-i18n="workspaceTag">PCB ENGINEERING / MATERIAL SYSTEM</span><h1 data-i18n="workspaceTitle">Layer stackup</h1></div><div class="main-heading-actions"><div class="segmented layout-switch" role="group" aria-label="Workspace layout"><button id="layoutSplitBtn" data-layout="split" data-i18n="sideBySide" aria-pressed="true" class="active">Side by side</button><button id="layoutStackBtn" data-layout="stacked" data-i18n="stackedView" aria-pressed="false">Stacked</button></div><button class="btn" id="sampleBtn" data-i18n="resetSample">Reset example</button><button class="btn" id="installBtn" hidden data-i18n="install">Install app</button></div></div>
     <div class="metric-row"><div class="metric"><span data-i18n="boardBody">BOARD BODY</span><strong id="bodyMetric">1.600 <small>mm</small></strong><em id="targetDelta">On target</em></div><div class="metric"><span data-i18n="totalIncludingMask">WITH SOLDER MASK</span><strong id="totalMetric">1.620 <small>mm</small></strong><em data-i18n="allLayers">All physical layers</em></div><div class="metric"><span data-i18n="copperLayers">COPPER LAYERS</span><strong id="copperMetric">4</strong><em data-i18n="fromTop">Top to bottom</em></div><div class="metric"><span data-i18n="dielectricLayers">DIELECTRICS</span><strong id="dielMetric">3</strong><em data-i18n="corePrepreg">Core / prepreg</em></div></div>
-    <nav class="mobile-jump-nav" aria-label="Schnellnavigation"><a href="#stackPanel" data-imp-jump="stack">Stackup</a><a href="#impPanel" data-imp-jump="imp">Impedance</a><a href="#viaSection" data-imp-jump="via">Via Fence</a></nav>
+    <nav class="mobile-jump-nav" aria-label="Schnellnavigation"><a href="#stackPanel" data-imp-jump="stack">Stackup</a><a href="#impPanel" data-imp-jump="imp">Impedanz</a><a href="#viaSection" data-imp-jump="via">Via Fence</a></nav>
     <div class="design-workbench" id="designWorkbench" aria-label="Stackup and impedance workspace">
     <section class="editor-panel" id="stackPanel" aria-label="Layer cross-section">
       <div class="section-heading"><div><span class="eyebrow" data-i18n="geometry">LIVE GEOMETRY</span><h2 data-i18n="crossSection">Cross-section</h2></div><div class="segmented"><button data-view="readable" class="active" data-i18n="readable">Readable</button><button data-view="scale" data-i18n="trueScale">True ratio</button></div></div>
@@ -121,7 +121,7 @@
             <div class="via-quick"><button class="btn accent-outline" type="button" id="viaAutoPitch" data-imp-label="viaAuto">Use λg/20</button><button class="btn" type="button" id="viaExport" data-imp-label="viaExport">Export via JSON</button></div>
           </div>
           <div class="via-visual">
-            <div class="imp-canvas-title" data-imp-label="viaTopView">Top view · GND via rows (schematic)</div><svg viewBox="0 0 620 230" id="viaSvg" role="img" aria-label="Via fence layout top view"></svg>
+            <div class="imp-canvas-title" data-imp-label="viaTopView">Top view · GND via rows (schematic)</div><svg viewBox="0 0 620 260" id="viaSvg" role="img" aria-label="Via fence layout top view"></svg>
             <div class="via-results" id="viaResults" aria-live="polite"></div><div id="viaWarnings" class="via-warnings"></div>
           </div>
         </div>
@@ -134,7 +134,7 @@
   </main>
   <aside class="sidebar sidebar-right"><div class="pane-title"><span class="eyebrow" data-i18n="propertiesTag">CONTEXT INSPECTOR</span><h2 data-i18n="properties">Properties</h2></div><div class="pane-scroll" id="inspector"></div></aside>
 </div>
-<footer class="statusbar"><div><span class="status-dot"></span><span id="statusText" data-i18n="localReady">Local engine ready</span><span class="status-divider">│</span><span data-i18n="noCloud">No cloud connection required</span></div><div><span id="validationStatus">—</span><span class="status-divider">│</span><span data-i18n="version">v0.4.2 beta</span></div></footer>
+<footer class="statusbar"><div><span class="status-dot"></span><span id="statusText" data-i18n="localReady">Local engine ready</span><span class="status-divider">│</span><span data-i18n="noCloud">No cloud connection required</span></div><div><span id="validationStatus">—</span><span class="status-divider">│</span><span data-i18n="version">v0.4.3 beta</span></div></footer>
 </div>
 <input id="fileInput" type="file" hidden accept=".json,.kicad_pcb,.txt,application/json,text/plain">
 <dialog id="helpDialog"><div class="dialog-top"><h2 data-i18n="helpTitle">Stackup Studio · Help</h2><button id="closeHelp" class="btn">✕</button></div><div id="helpContent"></div></dialog>
