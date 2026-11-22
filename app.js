@@ -85,7 +85,7 @@ function issues(){const arr=state.project.layers.filter(l=>!isMask(l));const err
  if(!arr.some(l=>l.type==='copper'&&['ground','power'].includes(l.role)))warnings.push(t('checkRoles'));
  return {errors:[...new Set(errors)],warnings:[...new Set(warnings)]};
 }
-function renderStatic(){document.documentElement.lang=state.lang;document.documentElement.dataset.theme=state.theme;document.querySelectorAll('[data-i18n]').forEach(node=>node.textContent=t(node.dataset.i18n));$('themeMeta').setAttribute('content',state.theme==='light'?'#eef2f4':'#0b121e');$('langBtn').textContent=state.lang==='de'?'EN':'DE';$('themeBtn').textContent=state.theme==='dark'?'☀':'☾';
+function renderStatic(){document.documentElement.lang=state.lang;document.documentElement.dataset.theme=state.theme;document.querySelectorAll('[data-i18n]').forEach(node=>node.textContent=t(node.dataset.i18n));$('themeMeta').setAttribute('content',getComputedStyle(document.documentElement).getPropertyValue('--sl-bg').trim());$('langBtn').textContent=state.lang==='de'?'EN':'DE';$('themeBtn').textContent=state.theme==='dark'?'☀':'☾';
  $('themeBtn').title=state.theme==='dark'?'Light mode':'Dark mode';$('projectName').value=state.project.projectName;$('targetThickness').value=fixed(state.project.targetThicknessMM);$('maskEnabled').checked=state.project.maskEnabled;$('watermarkEnabled').checked=state.project.watermarkEnabled;
  $('undoBtn').disabled=state.history.length===0;$('redoBtn').disabled=state.future.length===0;
  const count=copperCount();document.querySelectorAll('[data-preset]').forEach(btn=>btn.classList.toggle('active',+btn.dataset.preset===count));document.querySelectorAll('[data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===state.view));
@@ -117,9 +117,16 @@ function diagramSvg(W,H,forExport=false){
   sizes=sizes.map((v,i)=>Math.max(v,minH(layers[i])));
   const sum=sizes.reduce((a,b)=>a+b,0);sizes=sizes.map(v=>v*available/sum);
  }
- const dark=state.theme==='dark',muted=dark?'#91a7b5':'#5f7888';
- let svg=`<defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M 24 0 L 0 0 0 24" fill="none" stroke="${dark?'#2d4757':'#bdd0da'}" stroke-width="0.6" opacity=".5"/></pattern><pattern id="cu" width="9" height="9" patternUnits="userSpaceOnUse"><path d="M 0 9L9 0" stroke="#fff" stroke-width="1" opacity=".16" /></pattern></defs>`;
- svg+=`<rect width="${W}" height="${H}" fill="${dark?'#0e1a28':'#edf3f6'}"/><rect width="${W}" height="${H}" fill="url(#grid)"/>`;
+ const style=getComputedStyle(document.documentElement);
+ const dark=state.theme==='dark';
+ const token=(name,fallback)=>style.getPropertyValue(name).trim()||fallback;
+ const bg=token('--sl-bg-2',dark?'#0d1412':'#ece8dd');
+ const grid=token('--sl-line-2',dark?'#36463f':'#c4cabf');
+ const muted=token('--sl-muted',dark?'#a3b3ac':'#56645e');
+ const ink=token('--sl-text',dark?'#e8ede8':'#24302e');
+ const accent=token('--sl-accent-text',dark?'#ee9473':'#a3432a');
+ let svg=`<defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M 24 0 L 0 0 0 24" fill="none" stroke="${grid}" stroke-width="0.6" opacity=".5"/></pattern><pattern id="cu" width="9" height="9" patternUnits="userSpaceOnUse"><path d="M 0 9L9 0" stroke="#fff" stroke-width="1" opacity=".16" /></pattern></defs>`;
+ svg+=`<rect width="${W}" height="${H}" fill="${bg}"/><rect width="${W}" height="${H}" fill="url(#grid)"/>`;
  svg+=`<text x="${left}" y="${top-14}" font-size="${fs-1}" font-weight="750" letter-spacing="1.4" fill="${muted}">${state.lang==='de'?'OBERSEITE':'TOP SIDE'}</text><text x="${left}" y="${bottom+24}" font-size="${fs-1}" font-weight="750" letter-spacing="1.4" fill="${muted}">${state.lang==='de'?'UNTERSEITE':'BOTTOM SIDE'}</text>`;
  let y=top;
  layers.forEach((l,i)=>{
@@ -130,14 +137,14 @@ function diagramSvg(W,H,forExport=false){
   if(selected)svg+=`<rect class="selected-outline" x="${left-2}" y="${(y-1).toFixed(2)}" width="${right-left+4}" height="${(h+2).toFixed(2)}"/>`;
   const inner=l.type==='copper'?`${l.name} · ${roleLabel(l.role)}`:`${l.type==='core'?'Core':l.type==='prepreg'?'Prepreg':(state.lang==='de'?'Lötstoppmaske':'Solder mask')} · ${l.material}`;
   if(h>=13&&(right-left)>140)svg+=`<text pointer-events="none" x="${left+12}" y="${(mid+fs*.36).toFixed(2)}" font-size="${Math.min(fs,h-3).toFixed(1)}" font-weight="700" fill="${text}">${escSVG(inner)}</text>`;
-  svg+=`<text pointer-events="none" x="${left-10}" y="${(mid+fs*.36).toFixed(2)}" text-anchor="end" font-size="${fs}" fill="${selected?'#52dcd5':dark?'#a9bfcc':'#3f6476'}" font-weight="${selected?700:500}">${escSVG(l.name)}</text>`;
-  svg+=`<text pointer-events="none" x="${right+10}" y="${(mid+fs*.36).toFixed(2)}" text-anchor="start" font-size="${fs}" fill="${selected?'#52dcd5':dark?'#b3c8d4':'#3f6476'}" font-variant-numeric="tabular-nums">${fmt(l.thicknessMM)}</text>`;
+  svg+=`<text pointer-events="none" x="${left-10}" y="${(mid+fs*.36).toFixed(2)}" text-anchor="end" font-size="${fs}" fill="${selected?accent:ink}" font-weight="${selected?700:500}">${escSVG(l.name)}</text>`;
+  svg+=`<text pointer-events="none" x="${right+10}" y="${(mid+fs*.36).toFixed(2)}" text-anchor="start" font-size="${fs}" fill="${selected?accent:ink}" font-variant-numeric="tabular-nums">${fmt(l.thicknessMM)}</text>`;
   y+=h;
   svg+=`</g>`;
  });
  const dimX=W-dimW/2;
- svg+=`<path d="M ${dimX-9} ${top}h18 M${dimX-9} ${bottom}h18 M${dimX} ${top}V${bottom}" fill="none" stroke="${dark?'#6ea8b6':'#5d8393'}" stroke-width="1"/>`;
- svg+=`<text transform="translate(${dimX+(narrow?4:14)} ${top+available/2}) rotate(90)" text-anchor="middle" font-size="${fs}" font-weight="700" fill="${dark?'#c4dbe5':'#335566'}">${fmt(bodyThickness()+maskThickness())} mm${narrow?'':' · '+(state.lang==='de'?'GESAMT':'TOTAL')}</text>`;
+ svg+=`<path d="M ${dimX-9} ${top}h18 M${dimX-9} ${bottom}h18 M${dimX} ${top}V${bottom}" fill="none" stroke="${muted}" stroke-width="1"/>`;
+ svg+=`<text transform="translate(${dimX+(narrow?4:14)} ${top+available/2}) rotate(90)" text-anchor="middle" font-size="${fs}" font-weight="700" fill="${ink}">${fmt(bodyThickness()+maskThickness())} mm${narrow?'':' · '+(state.lang==='de'?'GESAMT':'TOTAL')}</text>`;
  svg+=`<text x="${right+10}" y="${top-14}" font-size="${fs-1}" font-weight="750" letter-spacing="1.2" fill="${muted}">mm</text>`;
  return svg;
 }
@@ -214,7 +221,7 @@ function downloadCsv(german=false){const sep=german?';':',';const vals=[['index'
 function exportSvgString(){const W=1100,H=Math.round(Math.min(700,Math.max(430,visibleLayers().length*36+130)));
  const ns='http://www.w3.org/2000/svg',holder=document.createElementNS(ns,'svg');holder.setAttribute('xmlns',ns);holder.setAttribute('viewBox',`0 0 ${W} ${H}`);holder.setAttribute('width',String(W*2));holder.setAttribute('height',String(H*2));holder.setAttribute('font-family','Segoe UI, Inter, Arial, sans-serif');
  holder.innerHTML=diagramSvg(W,H,true);holder.querySelectorAll('title').forEach(t=>t.remove());holder.querySelectorAll('g.svg-layer').forEach(g=>{g.removeAttribute('class');g.removeAttribute('data-layer');});holder.querySelectorAll('.rect-fill').forEach(el=>el.removeAttribute('class'));
- if(state.project.watermarkEnabled){const p=document.createElementNS(ns,'text');p.setAttribute('x',String(W/2));p.setAttribute('y',String(H-10));p.setAttribute('text-anchor','middle');p.setAttribute('font-size','11');p.setAttribute('letter-spacing','1.4');p.setAttribute('fill',state.theme==='dark'?'#86a9b6':'#647a87');p.textContent='SIMONLATION  ·  STACKUP STUDIO';holder.appendChild(p);}
+ if(state.project.watermarkEnabled){const p=document.createElementNS(ns,'text');p.setAttribute('x',String(W/2));p.setAttribute('y',String(H-10));p.setAttribute('text-anchor','middle');p.setAttribute('font-size','11');p.setAttribute('letter-spacing','1.4');p.setAttribute('fill',getComputedStyle(document.documentElement).getPropertyValue('--sl-muted').trim()||'#56645e');p.textContent='SIMONLATION  ·  STACKUP STUDIO';holder.appendChild(p);}
  exportSvgString.size={w:W*2,h:H*2};return new XMLSerializer().serializeToString(holder);
 }
 async function downloadGraphic(format){const svg=exportSvgString(),filename=sanitizeFilename(state.project.projectName)+'.cross-section.'+format;

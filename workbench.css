@@ -1,0 +1,73 @@
+/* Stackup workbench chrome shares the design system. Layer colors identify materials. */
+:root[data-theme] {
+  --bg: var(--sl-bg);
+  --panel: var(--sl-panel);
+  --panel2: var(--sl-sage-2);
+  --panel3: var(--sl-sage);
+  --viewport: var(--sl-bg-2);
+  --line: var(--sl-line);
+  --text: var(--sl-text);
+  --muted: var(--sl-muted);
+  --dim: var(--sl-muted);
+  --accent: var(--sl-accent-text);
+  --accent-text: var(--sl-primary-text);
+  --softaccent: var(--sl-selection);
+  --error: var(--sl-error);
+  --yellow: var(--sl-warn);
+  --input: var(--sl-panel);
+  --hover: var(--sl-sage-2);
+  --shadow: var(--sl-shadow);
+}
+
+:root[data-theme] :is(.eyebrow, .group-label, .diagram-footer, .metric > span, .imp-pill) {
+  font-family: var(--sl-font-mono);
+}
+
+:root[data-theme] :is(.metric strong, .imp-reading strong, .via-results strong) {
+  font-family: var(--sl-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+:root[data-theme] #impMainResult { font-family: var(--sl-font-serif); }
+
+:root[data-theme] :is(.editor-panel, .imp-panel, .via-section, .tolerance-panel, .table-panel, .metric) {
+  border-radius: var(--sl-radius);
+}
+
+:root[data-theme] :is(.preset-grid, .segmented) button.active,
+:root[data-theme] :is(.layer-row, .layer-nav-item).selected {
+  background: var(--sl-selection);
+  border-color: var(--sl-accent);
+  color: var(--sl-accent-text);
+}
+
+:root[data-theme] :is(.imp-solve-btn, .btn.primary) {
+  background: var(--sl-primary);
+  color: var(--sl-primary-text);
+  border-color: var(--sl-primary);
+}
+
+:root[data-theme] .imp-solve-btn:hover:not(:disabled) {
+  background: var(--sl-primary-hover);
+  border-color: var(--sl-primary-hover);
+}
+
+:root[data-theme] :is(button:hover:not(:disabled), .imp-pill, .accent-outline) {
+  border-color: var(--sl-line-2);
+}
+
+@media (max-width: 540px) {
+  .sl-workbench-header .top-actions > .sl-btn,
+  .sl-workbench-header .menu-anchor > .sl-btn { min-height: var(--sl-touch); }
+}
+
+:root[data-theme] .eyebrow { color: var(--sl-accent-text); }
+:root[data-theme] .metric em.good { color: var(--sl-ok); }
+:root[data-theme] .svg-layer.selected .selected-outline { stroke: var(--sl-accent); }
+
+:root[data-theme] .toast {
+  background: var(--sl-panel);
+  color: var(--sl-text);
+  border-color: var(--sl-line-2);
+  box-shadow: var(--sl-shadow);
+}

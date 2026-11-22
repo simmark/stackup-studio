@@ -61,7 +61,7 @@ function localError(message){const map={
 function drawCross(result){
  const svg=$('impSvg'),isDiff=paired(),isStrip=strip(),isCoplanar=state.mode.includes('gcpw'),embedded=state.mode==='embedded-microstrip';
  const schematic=state.view==='schematic',showVia=state.showCrossVias&&state.via.placement!=='none'&&schematic&&!isStrip;
- const dk=document.documentElement.dataset.theme==='dark',ink=dk?'#dceef5':'#234659',muted=dk?'#abc4d0':'#58798a';
+ const dk=document.documentElement.dataset.theme==='dark',ink='var(--sl-text, #24302e)',muted='var(--sl-muted, #56645e)';
  const refs=E.findRefs(project(),state.signalId);
  const layer=project().layers.find(l=>l.id===state.signalId)||{};
  const topRefMM=refs.top?.distanceMM||.15,bottomRefMM=refs.bottom?.distanceMM||.15;
@@ -85,9 +85,9 @@ function drawCross(result){
   traceTop=schematic?92:75;
   lower=traceTop+thickness+(schematic?126:h*mmPerPx);
  }
- const bg=dk?'#102130':'#eff5f8',diel=dk?'#245c68':'#6d9ba6',copper='#d9a262';
+ const bg='var(--sl-bg-2, #ece8dd)',diel=dk?'#245c68':'#6d9ba6',copper='#d9a262';
  const stripBar=(x,y,width,height=8)=>`<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${width.toFixed(2)}" height="${height.toFixed(2)}" rx="1.5" fill="${copper}" stroke="#eec798" stroke-width=".7"/>`;
- let out=`<defs><pattern id="impgrid" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M22 0H0V22" stroke="${dk?'#223847':'#d9e6ec'}" stroke-width=".65" fill="none"/></pattern></defs><rect width="620" height="310" fill="${bg}"/><rect width="620" height="310" fill="url(#impgrid)"/>`;
+ let out=`<defs><pattern id="impgrid" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M22 0H0V22" stroke="var(--sl-line, #d6dacf)" stroke-width=".65" fill="none"/></pattern></defs><rect width="620" height="310" fill="${bg}"/><rect width="620" height="310" fill="url(#impgrid)"/>`;
  const fillTop=isStrip?upper+9:traceTop+thickness;
  out+=`<rect x="38" y="${fillTop}" width="544" height="${Math.max(2,lower-fillTop)}" fill="${diel}" opacity=".88"/>`;
  if(isStrip)out+=stripBar(38,upper,544,9);
@@ -134,9 +134,9 @@ function drawCross(result){
 // Top view of the fence: trace runs horizontally, drawn to true scale (X = Y) as a cut-out, with dimensions.
 function drawVia(v){
  const svg=$('viaSvg');if(!svg)return;
- const W=620,H=260,dk=document.documentElement.dataset.theme==='dark',ink=dk?'#dbe9f1':'#2f4f63',muted=dk?'#8fa9b9':'#5f7888',grid=dk?'#22394a':'#d4e4ea',accent=dk?'#52dcd5':'#0b7f82';
+ const W=620,H=260,ink='var(--sl-text, #24302e)',muted='var(--sl-muted, #56645e)',grid='var(--sl-line, #d6dacf)',accent='var(--sl-accent-text, #a3432a)';
  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
- let out=`<rect width="${W}" height="${H}" rx="8" fill="${dk?'#0f1d2a':'#eef5f8'}"/><defs><pattern id="viaGrid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="${grid}" stroke-width=".6"/></pattern><marker id="vArr" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="${ink}"/></marker><marker id="vArrA" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="${accent}"/></marker></defs><rect width="${W}" height="${H}" fill="url(#viaGrid)"/>`;
+ let out=`<rect width="${W}" height="${H}" rx="8" fill="var(--sl-bg-2, #ece8dd)"/><defs><pattern id="viaGrid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="${grid}" stroke-width=".6"/></pattern><marker id="vArr" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="${ink}"/></marker><marker id="vArrA" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="${accent}"/></marker></defs><rect width="${W}" height="${H}" fill="url(#viaGrid)"/>`;
  const placement=state.via.placement,w=state.widthMM,sp=paired()?state.spacingMM:0,span=paired()?2*w+sp:w;
  if(!v?.ok){out+=`<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="${ink}" font-size="13">${de()?'Via Fence ausgeschaltet':'Via fence disabled'}</text>`;svg.innerHTML=out;return;}
  const pad=v.padMM,drill=v.drillMM,edge=v.edgeClearanceMM,pitch=v.actualPitchMM;
@@ -154,7 +154,7 @@ function drawVia(v){
  const rowY={t:-(span/2+edge+pad/2),b:span/2+edge+pad/2};
  for(const side of sides){const y=Y(rowY[side]);
   out+=`<rect x="${traceL}" y="${(y-pad*sc/2-3).toFixed(1)}" width="${traceR-traceL}" height="${(pad*sc+6).toFixed(1)}" fill="#4c9a89" opacity=".16" rx="3"/>`;
-  for(let i=0;i<shown;i++){const x=x0+i*pitch*sc;out+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(pad*sc/2).toFixed(1)}" fill="#d5a064" stroke="#f0cd91" stroke-width="1"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(drill*sc/2).toFixed(1)}" fill="${dk?'#0f1d2a':'#eef5f8'}"/>`;}
+  for(let i=0;i<shown;i++){const x=x0+i*pitch*sc;out+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(pad*sc/2).toFixed(1)}" fill="#d5a064" stroke="#f0cd91" stroke-width="1"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(drill*sc/2).toFixed(1)}" fill="var(--sl-bg-2, #ece8dd)"/>`;}
  }
  // pitch dimension outside the first row
  const s0=sides[0],ry=Y(rowY[s0]),dir=s0==='t'?-1:1,dimY=ry+dir*(pad*sc/2+18),xa=x0,xb=x0+pitch*sc;

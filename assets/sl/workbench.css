@@ -1,0 +1,85 @@
+/* SIMONLATION workbench header and controls for existing applications. */
+:root[data-theme] {
+  font-family: var(--sl-font-sans);
+  color: var(--sl-text);
+  background: var(--sl-bg);
+}
+
+.sl-workbench-brand {
+  display: grid;
+  gap: 2px;
+  width: max-content;
+  color: inherit;
+  text-decoration: none;
+}
+
+.sl-workbench-wordmark {
+  display: block;
+  width: auto;
+  height: 22px;
+}
+
+.sl-workbench-wordmark--dark,
+[data-theme="dark"] .sl-workbench-wordmark--light { display: none; }
+[data-theme="dark"] .sl-workbench-wordmark--dark { display: block; }
+
+.sl-workbench-name {
+  color: var(--sl-muted);
+  font: 500 11px/1.2 var(--sl-font-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+:root[data-theme] .sl-workbench-header {
+  background: var(--sl-panel);
+  border-color: var(--sl-line);
+}
+
+:root[data-theme] .sl-workbench-header .sl-btn {
+  color: var(--sl-text);
+  background: var(--sl-panel);
+  border-color: var(--sl-line-2);
+  border-radius: var(--sl-radius-s);
+}
+
+:root[data-theme] .sl-workbench-header .sl-btn:hover:not(:disabled) {
+  background: var(--sl-sage-2);
+  border-color: var(--sl-muted);
+}
+
+:root[data-theme] .sl-workbench-header .sl-btn.sl-btn--primary {
+  color: var(--sl-primary-text);
+  background: var(--sl-primary);
+  border-color: var(--sl-primary);
+}
+
+:root[data-theme] .sl-workbench-header .sl-btn.sl-btn--primary:hover:not(:disabled) {
+  background: var(--sl-primary-hover);
+  border-color: var(--sl-primary-hover);
+}
+
+:root {
+  --sl-primary: var(--sl-green);
+  --sl-primary-hover: var(--sl-green-2);
+  --sl-primary-text: #f7f5ef;
+  --sl-selection: color-mix(in srgb, var(--sl-accent) 12%, var(--sl-panel));
+}
+
+:root[data-theme="dark"] {
+  --sl-primary: var(--sl-orange);
+  --sl-primary-hover: #eb8c69;
+  --sl-primary-text: #1a1210;
+}
+
+:root[data-theme] :is(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--sl-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 670px) {
+  .sl-workbench-header .sl-status { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(button, input, select, .sidebar) { transition-duration: 0s !important; }
+}

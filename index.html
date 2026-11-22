@@ -1,22 +1,35 @@
 <!doctype html>
-<html lang="de">
+<html lang="de" data-theme="dark">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b121e" id="themeMeta"><meta name="application-name" content="SIMONLATION Stackup Studio">
+<meta name="theme-color" content="#121A18" id="themeMeta"><meta name="application-name" content="SIMONLATION Stackup Studio">
 <meta name="description" content="Free, local-first PCB layer stackup designer. Design copper and dielectric layers, import KiCad stackups, and export projects for impedance workflows.">
-<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" type="image/svg+xml" href="./icons/icon.svg"><link rel="apple-touch-icon" href="./icons/icon-192.png">
 <title>Stackup Studio | SIMONLATION</title><link rel="stylesheet" href="./styles.css?v=0.4.3">
+
+<link rel="stylesheet" href="./assets/sl/fonts.css?v=sl1">
+<link rel="stylesheet" href="./assets/sl/tokens.css?v=sl1">
+<link rel="stylesheet" href="./assets/sl/app.css?v=sl1">
+<link rel="stylesheet" href="./assets/sl/workbench.css?v=sl1">
+<link rel="stylesheet" href="./workbench.css?v=sl1">
 </head>
 <body>
 <div class="app" id="app">
-<header class="topbar">
-  <div class="brand"><div class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></div><div class="brand-word"><b>SIMON<span>LATION</span></b><small>STACKUP STUDIO</small></div><span class="beta-tag">BETA 0.4.3</span></div>
+<header class="topbar sl-workbench-header">
+  <div class="brand">
+    <a class="sl-workbench-brand" href="https://simonlation.com/launcher.html" aria-label="SIMONLATION Launcher">
+      <img class="sl-workbench-wordmark sl-workbench-wordmark--light" src="./assets/sl/brand/wordmark-light.svg" alt="">
+      <img class="sl-workbench-wordmark sl-workbench-wordmark--dark" src="./assets/sl/brand/wordmark-dark.svg" alt="">
+      <span class="sl-workbench-name">Stackup Studio</span>
+    </a>
+    <span class="sl-status" data-state="beta">Beta 0.4.3</span>
+  </div>
   <nav class="top-actions" aria-label="Project actions">
-    <button class="btn icon-btn" id="undoBtn" title="Undo · Ctrl+Z" aria-label="Undo">↶</button><button class="btn icon-btn" id="redoBtn" title="Redo · Ctrl+Shift+Z" aria-label="Redo">↷</button>
-    <span class="sep"></span><button class="btn" id="openBtn" data-i18n="open">Open</button>
-    <button class="btn primary" id="saveBtn" data-i18n="save">Export project</button>
-    <div class="menu-anchor"><button class="btn" id="exportBtn" aria-expanded="false" data-i18n="export">Export ▾</button><div class="dropdown hidden" id="exportMenu"><button data-export="svg">SVG · Cross-section</button><button data-export="png">PNG · Cross-section</button><button data-export="csv">CSV · Layer table</button><button data-export="csvde">CSV · Deutsch (Excel)</button><button data-export="bridge">JSON · Impedance handoff</button></div></div>
-    <span class="sep"></span><button class="btn mini" id="themeBtn" aria-label="Toggle theme">☀</button><button class="btn lang" id="langBtn">EN</button><button class="btn mini help" id="helpBtn" title="Help">?</button>
+    <button class="btn icon-btn sl-btn" id="undoBtn" title="Undo · Ctrl+Z" aria-label="Undo">↶</button><button class="btn icon-btn sl-btn" id="redoBtn" title="Redo · Ctrl+Shift+Z" aria-label="Redo">↷</button>
+    <span class="sep"></span><button class="btn sl-btn" id="openBtn" data-i18n="open">Open</button>
+    <button class="btn primary sl-btn sl-btn--primary" id="saveBtn" data-i18n="save">Export project</button>
+    <div class="menu-anchor"><button class="btn sl-btn" id="exportBtn" aria-expanded="false" data-i18n="export">Export ▾</button><div class="dropdown hidden" id="exportMenu"><button data-export="svg">SVG · Cross-section</button><button data-export="png">PNG · Cross-section</button><button data-export="csv">CSV · Layer table</button><button data-export="csvde">CSV · Deutsch (Excel)</button><button data-export="bridge">JSON · Impedance handoff</button></div></div>
+    <span class="sep"></span><button class="btn mini sl-btn" id="themeBtn" aria-label="Toggle theme">☀</button><button class="btn lang sl-btn" id="langBtn">EN</button><button class="btn mini help sl-btn" id="helpBtn" title="Help">?</button>
   </nav>
 </header>
 <div class="workspace">

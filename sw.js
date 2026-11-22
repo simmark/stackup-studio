@@ -1,6 +1,33 @@
 /* SIMONLATION Stackup Studio 0.4.3. Scoped PWA shell, no CDN or analytics. */
-const CACHE='simonlation-stackup-v0.4.3';
-const FILES=['./','./index.html','./app.js','./impedance-engine.js','./impedance-ui.js','./via-fence-engine.js','./styles.css','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
+const CACHE='simonlation-stackup-v0.4.3-workbench-v1';
+const FILES=[
+  './assets/sl/fonts.css?v=sl1',
+  './assets/sl/tokens.css?v=sl1',
+  './assets/sl/app.css?v=sl1',
+  './assets/sl/workbench.css?v=sl1',
+  './workbench.css?v=sl1',
+  './icons/icon.svg',
+  './assets/sl/brand/wordmark-dark.svg',
+  './assets/sl/brand/wordmark-light.svg',
+  './assets/sl/fonts/ibm-plex-mono-latin-400-normal.woff2',
+  './assets/sl/fonts/ibm-plex-mono-latin-500-normal.woff2',
+  './assets/sl/fonts/ibm-plex-mono-latin-ext-400-normal.woff2',
+  './assets/sl/fonts/ibm-plex-mono-latin-ext-500-normal.woff2',
+  './assets/sl/fonts/ibm-plex-sans-greek-400-normal.woff2',
+  './assets/sl/fonts/ibm-plex-sans-greek-500-normal.woff2',
+  './assets/sl/fonts/ibm-plex-sans-greek-600-normal.woff2',
+  './assets/sl/fonts/ibm-plex-sans-latin-400-italic.woff2',
+  './assets/sl/fonts/ibm-plex-sans-latin-400-normal.woff2',
+  './assets/sl/fonts/ibm-plex-sans-latin-500-normal.woff2',
+  './assets/sl/fonts/ibm-plex-sans-latin-600-normal.woff2',
+  './assets/sl/fonts/ibm-plex-sans-latin-ext-400-normal.woff2',
+  './assets/sl/fonts/ibm-plex-sans-latin-ext-500-normal.woff2',
+  './assets/sl/fonts/ibm-plex-sans-latin-ext-600-normal.woff2',
+  './assets/sl/fonts/source-serif-4-latin-ext-wght-italic.woff2',
+  './assets/sl/fonts/source-serif-4-latin-ext-wght-normal.woff2',
+  './assets/sl/fonts/source-serif-4-latin-wght-italic.woff2',
+  './assets/sl/fonts/source-serif-4-latin-wght-normal.woff2',
+  './','./index.html','./app.js','./impedance-engine.js','./impedance-ui.js','./via-fence-engine.js','./styles.css','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install', event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
  for(const name of await caches.keys())if(name.startsWith('simonlation-stackup-')&&name!==CACHE)await caches.delete(name);
