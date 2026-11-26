@@ -16,7 +16,7 @@
 .sl-workbench-wordmark {
   display: block;
   width: auto;
-  height: 38px;
+  height: 42px;
 }
 
 .sl-workbench-wordmark--dark,
@@ -30,8 +30,8 @@
 [data-theme="dark"] .sl-workbench-tool-icon--dark { display: block; }
 
 .sl-workbench-name {
-  /* unter den Buchstaben, ab dem I: 38 px Logohöhe * 162/150 */
-  margin: -8px 0 0 41px;
+  /* unter den Buchstaben, ab dem I: 42 px Logohöhe * 425/168 */
+  margin: -10px 0 0 106px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -93,4 +93,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   :is(button, input, select, .sidebar) { transition-duration: 0s !important; }
+}
+
+@media (max-width: 640px) {
+  .sl-workbench-wordmark { height: 30px; }
+  .sl-workbench-name { margin: -7px 0 0 76px; }
 }
