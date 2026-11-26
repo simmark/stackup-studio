@@ -1,11 +1,11 @@
 /* SIMONLATION Stackup Studio 0.4.3. Scoped PWA shell, no CDN or analytics. */
-const CACHE='simonlation-stackup-v0.4.3-workbench-v3';
+const CACHE='simonlation-stackup-v0.4.3-workbench-v4';
 const FILES=[
-  './assets/sl/fonts.css?v=sl3',
-  './assets/sl/tokens.css?v=sl3',
-  './assets/sl/app.css?v=sl3',
-  './assets/sl/workbench.css?v=sl3',
-  './workbench.css?v=sl3',
+  './assets/sl/fonts.css?v=sl4',
+  './assets/sl/tokens.css?v=sl4',
+  './assets/sl/app.css?v=sl4',
+  './assets/sl/workbench.css?v=sl4',
+  './workbench.css?v=sl4',
   './icons/icon.svg',
   './assets/sl/brand/logo-dark.svg',
   './assets/sl/brand/logo-light.svg',

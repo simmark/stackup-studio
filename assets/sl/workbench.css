@@ -7,39 +7,42 @@
 
 .sl-workbench-brand {
   display: grid;
-  gap: 2px;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  column-gap: 11px;
+  row-gap: 2px;
+  align-items: center;
   width: max-content;
   color: inherit;
   text-decoration: none;
 }
 
-.sl-workbench-wordmark {
-  display: block;
-  width: auto;
-  height: 42px;
-}
-
-.sl-workbench-wordmark--dark,
-[data-theme="dark"] .sl-workbench-wordmark--light { display: none; }
-[data-theme="dark"] .sl-workbench-wordmark--dark { display: block; }
-
-/* Werkzeug-Symbol vor dem Namen, hell/dunkel wie die Wortmarke */
-.sl-workbench-tool-icon { width: 15px; height: 15px; flex: none; }
+/* Werkzeug-Symbol links, Name groß, darunter "by" + kleines SIMONLATION-Logo */
+.sl-workbench-tool-icon { grid-row: 1 / 3; grid-column: 1; width: 38px; height: 38px; flex: none; }
 .sl-workbench-tool-icon--dark,
 [data-theme="dark"] .sl-workbench-tool-icon--light { display: none; }
 [data-theme="dark"] .sl-workbench-tool-icon--dark { display: block; }
 
 .sl-workbench-name {
-  /* unter den Buchstaben, ab dem I: 42 px Logohöhe * 425/168 */
-  margin: -10px 0 0 106px;
+  grid-column: 2; grid-row: 1;
+  font: 650 17px/1.1 var(--sl-font-sans);
+  letter-spacing: -.005em;
+  color: var(--sl-text);
+  white-space: nowrap;
+}
+
+.sl-workbench-by {
+  grid-column: 2; grid-row: 2;
   display: flex;
   align-items: center;
   gap: 6px;
   color: var(--sl-muted);
-  font: 500 11px/1.2 var(--sl-font-mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
 }
+.sl-workbench-by em { font: italic 400 11px/1 var(--sl-font-sans); }
+.sl-workbench-wordmark { display: block; width: auto; height: 20px; }
+.sl-workbench-wordmark--dark,
+[data-theme="dark"] .sl-workbench-wordmark--light { display: none; }
+[data-theme="dark"] .sl-workbench-wordmark--dark { display: block; }
 
 :root[data-theme] .sl-workbench-header {
   background: var(--sl-panel);
@@ -96,6 +99,7 @@
 }
 
 @media (max-width: 640px) {
-  .sl-workbench-wordmark { height: 30px; }
-  .sl-workbench-name { margin: -7px 0 0 76px; }
+  .sl-workbench-tool-icon { width: 32px; height: 32px; }
+  .sl-workbench-name { font-size: 15px; }
+  .sl-workbench-wordmark { height: 17px; }
 }
