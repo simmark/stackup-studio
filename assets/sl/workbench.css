@@ -16,14 +16,25 @@
 .sl-workbench-wordmark {
   display: block;
   width: auto;
-  height: 22px;
+  height: 38px;
 }
 
 .sl-workbench-wordmark--dark,
 [data-theme="dark"] .sl-workbench-wordmark--light { display: none; }
 [data-theme="dark"] .sl-workbench-wordmark--dark { display: block; }
 
+/* Werkzeug-Symbol vor dem Namen, hell/dunkel wie die Wortmarke */
+.sl-workbench-tool-icon { width: 15px; height: 15px; flex: none; }
+.sl-workbench-tool-icon--dark,
+[data-theme="dark"] .sl-workbench-tool-icon--light { display: none; }
+[data-theme="dark"] .sl-workbench-tool-icon--dark { display: block; }
+
 .sl-workbench-name {
+  /* unter den Buchstaben, ab dem I: 38 px Logohöhe * 162/150 */
+  margin: -8px 0 0 41px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--sl-muted);
   font: 500 11px/1.2 var(--sl-font-mono);
   letter-spacing: .08em;
