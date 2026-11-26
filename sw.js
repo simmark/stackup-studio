@@ -1,14 +1,14 @@
 /* SIMONLATION Stackup Studio 0.4.3. Scoped PWA shell, no CDN or analytics. */
-const CACHE='simonlation-stackup-v0.4.3-workbench-v4';
+const CACHE='simonlation-stackup-v0.4.3-workbench-v5';
 const FILES=[
-  './assets/sl/fonts.css?v=sl4',
-  './assets/sl/tokens.css?v=sl4',
-  './assets/sl/app.css?v=sl4',
-  './assets/sl/workbench.css?v=sl4',
-  './workbench.css?v=sl4',
+  './assets/sl/fonts.css?v=sl5',
+  './assets/sl/tokens.css?v=sl5',
+  './assets/sl/app.css?v=sl5',
+  './assets/sl/workbench.css?v=sl5',
+  './workbench.css?v=sl5',
   './icons/icon.svg',
-  './assets/sl/brand/logo-dark.svg',
-  './assets/sl/brand/logo-light.svg',
+  './assets/sl/brand/wordmark-dark.svg',
+  './assets/sl/brand/wordmark-light.svg',
   './assets/sl/fonts/ibm-plex-mono-latin-400-normal.woff2',
   './assets/sl/fonts/ibm-plex-mono-latin-500-normal.woff2',
   './assets/sl/fonts/ibm-plex-mono-latin-ext-400-normal.woff2',
